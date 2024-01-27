@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iocoder.yudao.module.member.dal.mysql.user.MyBatisUserMapper">
+
+    <select id="selectUserListByParentId"
+            resultType="cn.iocoder.yudao.module.member.controller.app.user.vo.user.AppMemberUserInfoRespVO">
+        WITH RECURSIVE recursion (id, parent_id) AS
+                           (
+                               SELECT T1.id, T1.parent_id from member_user T1 where T1.id = #{parentId}
+                               UNION ALL
+                               SELECT T2.id, T2.parent_id from member_user T2, recursion T3 WHERE T2.parent_id = T3.id
+                           )
+        SELECT T.id, T.parent_id FROM recursion T
+        where T.id != #{parentId};
+    </select>
+
+</mapper>
