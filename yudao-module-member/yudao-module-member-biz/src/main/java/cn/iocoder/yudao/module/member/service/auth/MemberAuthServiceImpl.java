@@ -11,8 +11,8 @@ import cn.iocoder.yudao.module.member.util.InvitationCodeGenerator;
 import cn.iocoder.yudao.module.admin.api.oauth2.OAuth2TokenApi;
 import cn.iocoder.yudao.module.admin.api.oauth2.dto.OAuth2AccessTokenCreateReqDTO;
 import cn.iocoder.yudao.module.admin.api.oauth2.dto.OAuth2AccessTokenRespDTO;
-import cn.iocoder.yudao.module.admin.api.web3.Web3UserApi;
-import cn.iocoder.yudao.module.admin.api.web3.dto.Web3UserRespDTO;
+import cn.iocoder.yudao.module.system.api.web3.Web3UserApi;
+import cn.iocoder.yudao.module.system.api.web3.dto.Web3UserRespDTO;
 import cn.iocoder.yudao.module.admin.enums.logger.LoginLogTypeEnum;
 import cn.iocoder.yudao.module.admin.enums.oauth2.OAuth2ClientConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class MemberAuthServiceImpl implements MemberAuthService {
     private MemberUserService userService;
     @Resource
     private Web3UserApi web3UserApi;
-    @Resource
+    @Resource(name = "systemOAuth2TokenApi")
     private OAuth2TokenApi oauth2TokenApi;
     @Resource
     private MemberUserMapper memberUserMapper;

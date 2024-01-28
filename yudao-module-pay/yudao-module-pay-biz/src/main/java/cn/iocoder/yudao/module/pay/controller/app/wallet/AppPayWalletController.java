@@ -58,6 +58,7 @@ public class AppPayWalletController {
         wallet.setBtcBalance(wallet.getBalance());
         wallet.setNubtBalance(nubtWallet.getBalance());
         wallet.setBalance(BigDecimal.ZERO);
+        BigDecimal coMarket=tokenService.getPastDayLowestShelvesPrice();
 
         List<TokenDO> tokenList = tokenService.getEnableTokenList(new TokenListReqVO().setStatus(CommonStatusEnum.ENABLE.getStatus()));
         for (TokenDO token : tokenList) {
@@ -67,7 +68,7 @@ public class AppPayWalletController {
                 wallet.setBalance(wallet.getBalance().add(btcValue));
             }
             if (token.getId() == 1L) {
-                BigDecimal nubtValue = wallet.getNubtBalance().multiply(token.getMarketCap());
+                BigDecimal nubtValue = wallet.getNubtBalance().multiply(coMarket);
                 wallet.setNubtBalanceValue(nubtValue);
                 wallet.setBalance(wallet.getBalance().add(nubtValue));
             }

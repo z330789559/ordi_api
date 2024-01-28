@@ -43,7 +43,7 @@ knife4j:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 虽然默认为 true ，但是还是显示去指定下。
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
   global-config:
     db-config:
       id-type: NONE # “智能”模式，基于 IdTypeEnvironmentPostProcessor + 数据源的类型，自动适配成 AUTO、INPUT 模式。
@@ -53,7 +53,7 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
     banner: false # 关闭控制台的 Banner 打印
-  type-aliases-package: ${yudao.info.base-package}.module.*.dal.dataobject
+  type-aliases-package: ${yudao.info.base-package}.module.*.dal.dataobject # 指定扫描的包，多个包用逗号分隔
   encryptor:
     password: XDV71a+xqStEA3WH # 加解密的秘钥，可使用 https://www.imaegoo.com/2020/aes-key-generator/ 网站生成
 
@@ -61,6 +61,34 @@ mybatis-plus-join:
   banner: false # 关闭控制台的 Banner 打印
 
 yudao:
+  security:
+    enable: true # 是否开启安全模块
+    ignore-urls: # 忽略安全校验的 URL 列表
+      - /admin-api/system/captcha/get # 获取图片验证码
+      - /admin-api/system/captcha/check # 校验图片验证码
+      - /admin-api/system/tenant/get-id-by-name # 基于名字获取租户
+      - /admin-api/system/tenant/get-by-website # 基于域名获取租户
+      - /admin-api/system/sms/callback/* # 短信回调接口
+      - /admin-api/pay/notify/** # 支付回调通知
+      - /jmreport/* # 积木报表
+      - /ureport/* # UReport 报表
+      - /app-api/*
+      - /admin-api/mp/open/** # 微信公众号开放平台，微信回调接口
+      - /admin-api/system/oss/callback/** # OSS 回调接口
+      - /admin-api/system/oss/download/** # OSS 下载接口
+      - /admin-api/system/oss/upload/** # OSS 上传接口
+      - /admin-api/system/oss/upload-base64/** # OSS 上传接口
+      - /admin-api/system/oss/upload-url/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-base64/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-url/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-file/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-files/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-file-base64/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-file-url/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-file-file/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-file-files/** # OSS 上传接口
+      - /admin-api/system/oss/upload-multipart-files-base64/** # OSS 上传
   codegen:
     enable: true # 是否开启代码生成器
     frontType: 30 # 前端类型，vue 或者 react

@@ -12,7 +12,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 异步任务 Configuration
  */
 @AutoConfiguration
-@EnableAsync
+@EnableAsync(proxyTargetClass = true)
 public class YudaoAsyncAutoConfiguration {
 
     @Bean

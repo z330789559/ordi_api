@@ -5,7 +5,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.token.OAuth2AccessTokenPageReqVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.token.OAuth2AccessTokenRespVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
 import cn.iocoder.yudao.module.admin.enums.logger.LoginLogTypeEnum;
 import cn.iocoder.yudao.module.admin.service.auth.AdminAuthService;
 import cn.iocoder.yudao.module.admin.service.oauth2.OAuth2TokenService;
@@ -34,7 +34,7 @@ public class OAuth2TokenController {
     @Operation(summary = "获得访问令牌分页", description = "只返回有效期内的")
     @PreAuthorize("@ss.hasPermission('system:oauth2-token:page')")
     public CommonResult<PageResult<OAuth2AccessTokenRespVO>> getAccessTokenPage(@Valid OAuth2AccessTokenPageReqVO reqVO) {
-        PageResult<OAuth2AccessTokenDO> pageResult = oauth2TokenService.getAccessTokenPage(reqVO);
+        PageResult<AdminOAuth2AccessTokenDO> pageResult = oauth2TokenService.getAccessTokenPage(reqVO);
         return success(BeanUtils.toBean(pageResult, OAuth2AccessTokenRespVO.class));
     }
 

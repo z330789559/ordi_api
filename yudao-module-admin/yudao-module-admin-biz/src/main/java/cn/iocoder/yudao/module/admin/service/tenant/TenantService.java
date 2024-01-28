@@ -4,7 +4,8 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.tenant.core.context.TenantContextHolder;
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantPageReqVO;
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantSaveReqVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.TenantDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.AdminTenantDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.AdminTenantDO;
 import cn.iocoder.yudao.module.admin.service.tenant.handler.TenantInfoHandler;
 import cn.iocoder.yudao.module.admin.service.tenant.handler.TenantMenuHandler;
 
@@ -55,7 +56,7 @@ public interface TenantService {
      * @param id 编号
      * @return 租户
      */
-    TenantDO getTenant(Long id);
+    AdminTenantDO getTenant(Long id);
 
     /**
      * 获得租户分页
@@ -63,7 +64,7 @@ public interface TenantService {
      * @param pageReqVO 分页查询
      * @return 租户分页
      */
-    PageResult<TenantDO> getTenantPage(TenantPageReqVO pageReqVO);
+    PageResult<AdminTenantDO> getTenantPage(TenantPageReqVO pageReqVO);
 
     /**
      * 获得名字对应的租户
@@ -71,7 +72,7 @@ public interface TenantService {
      * @param name 租户名
      * @return 租户
      */
-    TenantDO getTenantByName(String name);
+    AdminTenantDO getTenantByName(String name);
 
     /**
      * 获得域名对应的租户
@@ -79,7 +80,7 @@ public interface TenantService {
      * @param website 域名
      * @return 租户
      */
-    TenantDO getTenantByWebsite(String website);
+    AdminTenantDO getTenantByWebsite(String website);
 
     /**
      * 获得使用指定套餐的租户数量
@@ -95,7 +96,7 @@ public interface TenantService {
      * @param packageId 租户套餐编号
      * @return 租户数组
      */
-    List<TenantDO> getTenantListByPackageId(Long packageId);
+    List<AdminTenantDO> getTenantListByPackageId(Long packageId);
 
     /**
      * 进行租户的信息处理逻辑

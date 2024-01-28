@@ -5,7 +5,7 @@ import cn.iocoder.yudao.module.admin.api.sms.dto.code.SmsCodeSendReqDTO;
 import cn.iocoder.yudao.module.admin.api.sms.dto.code.SmsCodeUseReqDTO;
 import cn.iocoder.yudao.module.admin.api.social.dto.SocialUserBindReqDTO;
 import cn.iocoder.yudao.module.admin.controller.admin.auth.vo.*;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.permission.MenuDO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.permission.RoleDO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.user.AdminUserDO;
@@ -25,7 +25,7 @@ public interface AuthConvert {
 
     AuthConvert INSTANCE = Mappers.getMapper(AuthConvert.class);
 
-    AuthLoginRespVO convert(OAuth2AccessTokenDO bean);
+    AuthLoginRespVO convert(AdminOAuth2AccessTokenDO bean);
 
     default AuthPermissionInfoRespVO convert(AdminUserDO user, List<RoleDO> roleList, List<MenuDO> menuList) {
         return AuthPermissionInfoRespVO.builder()

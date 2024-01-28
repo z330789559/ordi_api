@@ -47,6 +47,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Resource
     private TokenMapper tokenMapper;
+
     @Resource
     @Lazy // 循环依赖，避免报错
     private ItemService itemService;
@@ -225,6 +226,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public BigDecimal getPastDayLowestShelvesPrice() {
+        return tokenMapper.queryPastDayLowestPrice();
+    }
+
+    @Override
     public AppTokenRespVO selectVolume() {
         return tokenMapper.selectVolume();
     }
@@ -236,35 +242,36 @@ public class TokenServiceImpl implements TokenService {
         String key = "product_token:price:NUBT";
         LocalTime currentTime = LocalTime.now();
 
-        ItemDO item = itemService.getLowerPriceEnableItem();
-        if (item == null) {
-            return;
-        }
+//        ItemDO item = itemService.getLowerPriceEnableItem();
+//        if (item == null) {
+//            return;
+//        }
+        BigDecimal price = getPastDayLowestShelvesPrice();
 
         // 定时任务10秒一次，每天第一次保存redis
         boolean isFirstTime = isBeforeSeconds(currentTime, 20);
         if (isFirstTime) {
-            stringRedisTemplate.opsForValue().set(key, item.getPrice().toString());
+            stringRedisTemplate.opsForValue().set(key, price.toString());
         }
 
         String CachePrice = stringRedisTemplate.opsForValue().get(key);
         if (CachePrice == null) {
-            CachePrice = item.getPrice().toString();
+            CachePrice = price.toString();
             stringRedisTemplate.opsForValue().set(key, CachePrice);
         }
 
 
         BigDecimal openPrice = new BigDecimal(CachePrice);
 
-        BigDecimal changeRate = (item.getPrice().subtract(openPrice)).divide(openPrice, 6, RoundingMode.UP);
+        BigDecimal changeRate = (price.subtract(openPrice)).divide(openPrice, 6, RoundingMode.UP);
 
-        BigDecimal rate = BigDecimal.ONE.divide(item.getPrice(), 10, RoundingMode.UP);
+        BigDecimal rate = BigDecimal.ONE.divide(price, 10, RoundingMode.UP);
 
         tokenMapper.update(new LambdaUpdateWrapper<TokenDO>()
                 .set(TokenDO::getPrice, rate)
                 .set(TokenDO::getUsdPrice, rate)
                 .set(TokenDO::getChangeRate, changeRate)
-                .set(TokenDO::getMarketCap, item.getPrice())
+                .set(TokenDO::getMarketCap, price)
                 .eq(TokenDO::getId,1));
     }
 

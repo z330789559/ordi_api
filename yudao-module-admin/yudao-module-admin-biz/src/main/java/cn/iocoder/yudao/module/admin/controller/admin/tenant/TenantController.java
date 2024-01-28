@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantPag
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantRespVO;
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantSaveReqVO;
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.tenant.TenantSimpleRespVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.TenantDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.AdminTenantDO;
 import cn.iocoder.yudao.module.admin.service.tenant.TenantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,7 +41,7 @@ public class TenantController {
     @Operation(summary = "使用租户名，获得租户编号", description = "登录界面，根据用户的租户名，获得租户编号")
     @Parameter(name = "name", description = "租户名", required = true, example = "1024")
     public CommonResult<Long> getTenantIdByName(@RequestParam("name") String name) {
-        TenantDO tenant = tenantService.getTenantByName(name);
+        AdminTenantDO tenant = tenantService.getTenantByName(name);
         return success(tenant != null ? tenant.getId() : null);
     }
 
@@ -50,7 +50,7 @@ public class TenantController {
     @Operation(summary = "使用域名，获得租户信息", description = "登录界面，根据用户的域名，获得租户信息")
     @Parameter(name = "website", description = "域名", required = true, example = "www.iocoder.cn")
     public CommonResult<TenantSimpleRespVO> getTenantByWebsite(@RequestParam("website") String website) {
-        TenantDO tenant = tenantService.getTenantByWebsite(website);
+        AdminTenantDO tenant = tenantService.getTenantByWebsite(website);
         return success(BeanUtils.toBean(tenant, TenantSimpleRespVO.class));
     }
 
@@ -83,7 +83,7 @@ public class TenantController {
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('system:tenant:query')")
     public CommonResult<TenantRespVO> getTenant(@RequestParam("id") Long id) {
-        TenantDO tenant = tenantService.getTenant(id);
+        AdminTenantDO tenant = tenantService.getTenant(id);
         return success(BeanUtils.toBean(tenant, TenantRespVO.class));
     }
 
@@ -91,7 +91,7 @@ public class TenantController {
     @Operation(summary = "获得租户分页")
     @PreAuthorize("@ss.hasPermission('system:tenant:query')")
     public CommonResult<PageResult<TenantRespVO>> getTenantPage(@Valid TenantPageReqVO pageVO) {
-        PageResult<TenantDO> pageResult = tenantService.getTenantPage(pageVO);
+        PageResult<AdminTenantDO> pageResult = tenantService.getTenantPage(pageVO);
         return success(BeanUtils.toBean(pageResult, TenantRespVO.class));
     }
 
@@ -102,7 +102,7 @@ public class TenantController {
     public void exportTenantExcel(@Valid TenantPageReqVO exportReqVO,
                                   HttpServletResponse response) throws IOException {
         exportReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<TenantDO> list = tenantService.getTenantPage(exportReqVO).getList();
+        List<AdminTenantDO> list = tenantService.getTenantPage(exportReqVO).getList();
         // 导出 Excel
         ExcelUtils.write(response, "租户.xls", "数据", TenantRespVO.class,
                 BeanUtils.toBean(list, TenantRespVO.class));

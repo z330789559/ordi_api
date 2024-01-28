@@ -9,7 +9,7 @@ import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.recharge.AppPayWalle
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargeDO;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargeService;
-import cn.iocoder.yudao.module.admin.dal.dataobject.web3.Web3UserDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.web3.Web3UserDO;
 import com.alibaba.fastjson2.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import cn.iocoder.yudao.module.admin.service.web3.Web3UserService;
+import cn.iocoder.yudao.module.system.service.web3.Web3UserService;
 
 
 import javax.annotation.Resource;

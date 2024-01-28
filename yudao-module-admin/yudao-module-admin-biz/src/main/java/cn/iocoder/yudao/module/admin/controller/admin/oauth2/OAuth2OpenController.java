@@ -13,9 +13,9 @@ import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenA
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenAuthorizeInfoRespVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenCheckTokenRespVO;
 import cn.iocoder.yudao.module.admin.convert.oauth2.OAuth2OpenConvert;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2ApproveDO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2ClientDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2ApproveDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2ClientDO;
 import cn.iocoder.yudao.module.admin.enums.oauth2.OAuth2GrantTypeEnum;
 import cn.iocoder.yudao.module.admin.service.oauth2.OAuth2ApproveService;
 import cn.iocoder.yudao.module.admin.service.oauth2.OAuth2ClientService;
@@ -117,11 +117,11 @@ public class OAuth2OpenController {
 
         // 1.2 校验客户端
         String[] clientIdAndSecret = obtainBasicAuthorization(request);
-        OAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientIdAndSecret[0], clientIdAndSecret[1],
+        AdminOAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientIdAndSecret[0], clientIdAndSecret[1],
                 grantType, scopes, redirectUri);
 
         // 2. 根据授权模式，获取访问令牌
-        OAuth2AccessTokenDO accessTokenDO;
+        AdminOAuth2AccessTokenDO accessTokenDO;
         switch (grantTypeEnum) {
             case AUTHORIZATION_CODE:
                 accessTokenDO = oauth2GrantService.grantAuthorizationCodeForAccessToken(client.getClientId(), code, redirectUri, state);
@@ -151,7 +151,7 @@ public class OAuth2OpenController {
                                              @RequestParam("token") String token) {
         // 校验客户端
         String[] clientIdAndSecret = obtainBasicAuthorization(request);
-        OAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientIdAndSecret[0], clientIdAndSecret[1],
+        AdminOAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientIdAndSecret[0], clientIdAndSecret[1],
                 null, null, null);
 
         // 删除访问令牌
@@ -174,7 +174,7 @@ public class OAuth2OpenController {
                 null, null, null);
 
         // 校验令牌
-        OAuth2AccessTokenDO accessTokenDO = oauth2TokenService.checkAccessToken(token);
+        AdminOAuth2AccessTokenDO accessTokenDO = oauth2TokenService.checkAccessToken(token);
         Assert.notNull(accessTokenDO, "访问令牌不能为空"); // 防御性检查
         return success(OAuth2OpenConvert.INSTANCE.convert2(accessTokenDO));
     }
@@ -189,9 +189,9 @@ public class OAuth2OpenController {
         // 0. 校验用户已经登录。通过 Spring Security 实现
 
         // 1. 获得 Client 客户端的信息
-        OAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientId);
+        AdminOAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientId);
         // 2. 获得用户已经授权的信息
-        List<OAuth2ApproveDO> approves = oauth2ApproveService.getApproveList(getLoginUserId(), getUserType(), clientId);
+        List<AdminOAuth2ApproveDO> approves = oauth2ApproveService.getApproveList(getLoginUserId(), getUserType(), clientId);
         // 拼接返回
         return success(OAuth2OpenConvert.INSTANCE.convert(client, approves));
     }
@@ -231,7 +231,7 @@ public class OAuth2OpenController {
         // 1.1 校验 responseType 是否满足 code 或者 token 值
         OAuth2GrantTypeEnum grantTypeEnum = getGrantTypeEnum(responseType);
         // 1.2 校验 redirectUri 重定向域名是否合法 + 校验 scope 是否在 Client 授权范围内
-        OAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientId, null,
+        AdminOAuth2ClientDO client = oauth2ClientService.validOAuthClientFromCache(clientId, null,
                 grantTypeEnum.getGrantType(), scopes.keySet(), redirectUri);
 
         // 2.1 假设 approved 为 null，说明是场景一
@@ -267,10 +267,10 @@ public class OAuth2OpenController {
         throw exception0(BAD_REQUEST.getCode(), "response_type 参数值只允许 code 和 token");
     }
 
-    private String getImplicitGrantRedirect(Long userId, OAuth2ClientDO client,
+    private String getImplicitGrantRedirect(Long userId, AdminOAuth2ClientDO client,
                                             List<String> scopes, String redirectUri, String state) {
         // 1. 创建 access token 访问令牌
-        OAuth2AccessTokenDO accessTokenDO = oauth2GrantService.grantImplicit(userId, getUserType(), client.getClientId(), scopes);
+        AdminOAuth2AccessTokenDO accessTokenDO = oauth2GrantService.grantImplicit(userId, getUserType(), client.getClientId(), scopes);
         Assert.notNull(accessTokenDO, "访问令牌不能为空"); // 防御性检查
         // 2. 拼接重定向的 URL
         // noinspection unchecked
@@ -278,7 +278,7 @@ public class OAuth2OpenController {
                 scopes, JsonUtils.parseObject(client.getAdditionalInformation(), Map.class));
     }
 
-    private String getAuthorizationCodeRedirect(Long userId, OAuth2ClientDO client,
+    private String getAuthorizationCodeRedirect(Long userId, AdminOAuth2ClientDO client,
                                                 List<String> scopes, String redirectUri, String state) {
         // 1. 创建 code 授权码
         String authorizationCode = oauth2GrantService.grantAuthorizationCodeForCode(userId, getUserType(), client.getClientId(), scopes,

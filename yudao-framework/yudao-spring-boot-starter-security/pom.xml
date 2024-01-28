@@ -59,11 +59,16 @@
         </dependency>
 
         <!-- 业务组件 -->
-        <dependency>
-            <groupId>cn.iocoder.boot</groupId>
-            <artifactId>yudao-module-system-api</artifactId> <!-- 需要使用它，进行 Token 的校验 -->
+<!--        <dependency>-->
+<!--            <groupId>cn.iocoder.boot</groupId>-->
+<!--            <artifactId>yudao-module-system-api</artifactId> &lt;!&ndash; 需要使用它，进行 Token 的校验 &ndash;&gt;-->
+<!--            <version>${revision}</version>-->
+<!--        </dependency>-->
+		<dependency>
+			<groupId>cn.iocoder.boot</groupId>
+			<artifactId>yudao-module-admin-api</artifactId>
             <version>${revision}</version>
-        </dependency>
-    </dependencies>
+		</dependency>
+	</dependencies>
 
 </project>

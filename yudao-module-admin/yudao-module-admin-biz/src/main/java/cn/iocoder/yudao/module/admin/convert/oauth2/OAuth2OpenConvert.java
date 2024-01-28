@@ -9,9 +9,9 @@ import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenAccessTokenRespVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenAuthorizeInfoRespVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.open.OAuth2OpenCheckTokenRespVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2ApproveDO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2ClientDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2ApproveDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2ClientDO;
 import cn.iocoder.yudao.module.admin.util.oauth2.OAuth2Utils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -25,7 +25,7 @@ public interface OAuth2OpenConvert {
 
     OAuth2OpenConvert INSTANCE = Mappers.getMapper(OAuth2OpenConvert.class);
 
-    default OAuth2OpenAccessTokenRespVO convert(OAuth2AccessTokenDO bean) {
+    default OAuth2OpenAccessTokenRespVO convert(AdminOAuth2AccessTokenDO bean) {
         OAuth2OpenAccessTokenRespVO respVO = BeanUtils.toBean(bean, OAuth2OpenAccessTokenRespVO.class);
         respVO.setTokenType(SecurityFrameworkUtils.AUTHORIZATION_BEARER.toLowerCase());
         respVO.setExpiresIn(OAuth2Utils.getExpiresIn(bean.getExpiresTime()));
@@ -33,19 +33,19 @@ public interface OAuth2OpenConvert {
         return respVO;
     }
 
-    default OAuth2OpenCheckTokenRespVO convert2(OAuth2AccessTokenDO bean) {
+    default OAuth2OpenCheckTokenRespVO convert2(AdminOAuth2AccessTokenDO bean) {
         OAuth2OpenCheckTokenRespVO respVO = BeanUtils.toBean(bean, OAuth2OpenCheckTokenRespVO.class);
         respVO.setExp(LocalDateTimeUtil.toEpochMilli(bean.getExpiresTime()) / 1000L);
         respVO.setUserType(UserTypeEnum.ADMIN.getValue());
         return respVO;
     }
 
-    default OAuth2OpenAuthorizeInfoRespVO convert(OAuth2ClientDO client, List<OAuth2ApproveDO> approves) {
+    default OAuth2OpenAuthorizeInfoRespVO convert(AdminOAuth2ClientDO client, List<AdminOAuth2ApproveDO> approves) {
         // 构建 scopes
         List<KeyValue<String, Boolean>> scopes = new ArrayList<>(client.getScopes().size());
-        Map<String, OAuth2ApproveDO> approveMap = CollectionUtils.convertMap(approves, OAuth2ApproveDO::getScope);
+        Map<String, AdminOAuth2ApproveDO> approveMap = CollectionUtils.convertMap(approves, AdminOAuth2ApproveDO::getScope);
         client.getScopes().forEach(scope -> {
-            OAuth2ApproveDO approve = approveMap.get(scope);
+            AdminOAuth2ApproveDO approve = approveMap.get(scope);
             scopes.add(new KeyValue<>(scope, approve != null ? approve.getApproved() : false));
         });
         // 拼接返回

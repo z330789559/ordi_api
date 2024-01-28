@@ -2,7 +2,8 @@ package cn.iocoder.yudao.module.admin.service.oauth2;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.token.OAuth2AccessTokenPageReqVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
+
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface OAuth2TokenService {
      * @param scopes 授权范围
      * @return 访问令牌的信息
      */
-    OAuth2AccessTokenDO createAccessToken(Long userId, Integer userType, String clientId, List<String> scopes);
+    AdminOAuth2AccessTokenDO createAccessToken(Long userId, Integer userType, String clientId, List<String> scopes);
 
     /**
      * 刷新访问令牌
@@ -38,7 +39,7 @@ public interface OAuth2TokenService {
      * @param clientId 客户端编号
      * @return 访问令牌的信息
      */
-    OAuth2AccessTokenDO refreshAccessToken(String refreshToken, String clientId);
+    AdminOAuth2AccessTokenDO refreshAccessToken(String refreshToken, String clientId);
 
     /**
      * 获得访问令牌
@@ -48,7 +49,7 @@ public interface OAuth2TokenService {
      * @param accessToken 访问令牌
      * @return 访问令牌的信息
      */
-    OAuth2AccessTokenDO getAccessToken(String accessToken);
+    AdminOAuth2AccessTokenDO getAccessToken(String accessToken);
 
     /**
      * 校验访问令牌
@@ -56,7 +57,7 @@ public interface OAuth2TokenService {
      * @param accessToken 访问令牌
      * @return 访问令牌的信息
      */
-    OAuth2AccessTokenDO checkAccessToken(String accessToken);
+    AdminOAuth2AccessTokenDO checkAccessToken(String accessToken);
 
     /**
      * 移除访问令牌
@@ -67,7 +68,7 @@ public interface OAuth2TokenService {
      * @param accessToken 刷新令牌
      * @return 访问令牌的信息
      */
-    OAuth2AccessTokenDO removeAccessToken(String accessToken);
+    AdminOAuth2AccessTokenDO removeAccessToken(String accessToken);
 
     /**
      * 获得访问令牌分页
@@ -75,6 +76,6 @@ public interface OAuth2TokenService {
      * @param reqVO 请求
      * @return 访问令牌分页
      */
-    PageResult<OAuth2AccessTokenDO> getAccessTokenPage(OAuth2AccessTokenPageReqVO reqVO);
+    PageResult<AdminOAuth2AccessTokenDO> getAccessTokenPage(OAuth2AccessTokenPageReqVO reqVO);
 
 }

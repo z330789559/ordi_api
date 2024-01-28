@@ -39,6 +39,7 @@ public class AppTokenController {
             if (token.getId() == 1L){
                 token.setVolume(appTokenRespVO.getVolume().multiply(btc.getPrice()));
                 token.setVolume24h(appTokenRespVO.getVolume24h().multiply(btc.getPrice()));
+                token.setMarketCap(tokenService.getPastDayLowestShelvesPrice());
             }
         }
         return success(TokenConvert.INSTANCE.convertList03(list));

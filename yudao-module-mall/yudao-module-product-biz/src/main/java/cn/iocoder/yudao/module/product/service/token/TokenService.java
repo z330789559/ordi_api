@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.product.controller.app.token.vo.AppTokenRespVO;
 import cn.iocoder.yudao.module.product.dal.dataobject.token.TokenDO;
 
 import javax.validation.Valid;
+
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -91,6 +93,8 @@ public interface TokenService {
     void scanTokenPrice();
 
     void scanChainTokenPrice();
+
+    BigDecimal getPastDayLowestShelvesPrice();
 
     AppTokenRespVO selectVolume();
 }

@@ -95,4 +95,6 @@ public class TokenDO extends BaseDO {
     private BigDecimal buyGasLimit;
 
     private BigDecimal sellGasLimit;
+
+    private Integer tradeCount;
 }

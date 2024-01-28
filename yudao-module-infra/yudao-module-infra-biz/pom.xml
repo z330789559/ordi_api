@@ -49,7 +49,7 @@
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
             <artifactId>yudao-spring-boot-starter-websocket</artifactId>
-            <version>${revision}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- DB 相关 -->
@@ -124,8 +124,7 @@
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
             <artifactId>yudao-module-admin-api</artifactId>
-            <version>${version}</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

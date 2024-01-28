@@ -33,7 +33,7 @@ public class PayWalletServiceImpl implements PayWalletService {
     private PayWalletMapper walletMapper;
     @Resource
     private PayWalletTransactionService walletTransactionService;
-    
+
     @Override
     public PayWalletDO getOrCreateWallet(Long userId, Integer userType) {
         PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType);
@@ -87,7 +87,10 @@ public class PayWalletServiceImpl implements PayWalletService {
             case PAYMENT:
             case PAYMENT_GAS:
             case SELL:
-            case REWARD_PAYMENT:
+            case REWARD_PAYMENT: {
+                updateCounts = walletMapper.updateWhenConsumption(payWallet.getId(), price);
+                break;
+            }
             case RECHARGE_REFUND: {
                 updateCounts = walletMapper.updateWhenRechargeRefund(payWallet.getId(), price);
                 break;

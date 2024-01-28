@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -35,6 +36,15 @@ public interface TokenMapper extends BaseMapperX<TokenDO> {
     default TokenDO selectByStatusAndName(Integer status,String name) {
        return selectOne(new LambdaQueryWrapper<TokenDO>().eq(TokenDO::getStatus,status).eq(TokenDO::getName,name));
     }
+
+
+
+
+    @Select("select " +
+            "ifnull(min(price),0) as lowestPrice " +
+            " from ordi_product_item where create_time > date_sub(now(), interval 24 hour)   "
+    )
+    BigDecimal queryPastDayLowestPrice();
 
 
     @Select("select ifnull(sum(otoi.price * otoi.quantity),0) as volume," +

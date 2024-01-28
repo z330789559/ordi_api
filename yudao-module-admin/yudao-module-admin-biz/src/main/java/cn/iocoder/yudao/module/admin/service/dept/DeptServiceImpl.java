@@ -8,7 +8,7 @@ import cn.iocoder.yudao.framework.datapermission.core.annotation.DataPermission;
 import cn.iocoder.yudao.module.admin.controller.admin.dept.vo.dept.DeptListReqVO;
 import cn.iocoder.yudao.module.admin.controller.admin.dept.vo.dept.DeptSaveReqVO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.dept.DeptDO;
-import cn.iocoder.yudao.module.admin.dal.mysql.dept.DeptMapper;
+import cn.iocoder.yudao.module.admin.dal.mysql.dept.AdminDeptMapper;
 import cn.iocoder.yudao.module.admin.dal.redis.RedisKeyConstants;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ import static cn.iocoder.yudao.module.admin.enums.ErrorCodeConstants.*;
 public class DeptServiceImpl implements DeptService {
 
     @Resource
-    private DeptMapper deptMapper;
+    private AdminDeptMapper deptMapper;
 
     @Override
     @CacheEvict(cacheNames = RedisKeyConstants.DEPT_CHILDREN_ID_LIST,

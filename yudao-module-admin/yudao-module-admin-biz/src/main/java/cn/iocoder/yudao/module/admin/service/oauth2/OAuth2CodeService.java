@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.admin.service.oauth2;
 
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2CodeDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2CodeDO;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public interface OAuth2CodeService {
      * @param state 状态
      * @return 授权码的信息
      */
-    OAuth2CodeDO createAuthorizationCode(Long userId, Integer userType, String clientId,
+    AdminOAuth2CodeDO createAuthorizationCode(Long userId, Integer userType, String clientId,
                                          List<String> scopes, String redirectUri, String state);
 
     /**
@@ -34,6 +34,6 @@ public interface OAuth2CodeService {
      *
      * @param code 授权码
      */
-    OAuth2CodeDO consumeAuthorizationCode(String code);
+    AdminOAuth2CodeDO consumeAuthorizationCode(String code);
 
 }

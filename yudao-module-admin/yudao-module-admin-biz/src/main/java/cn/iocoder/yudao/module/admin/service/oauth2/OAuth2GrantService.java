@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.admin.service.oauth2;
 
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public interface OAuth2GrantService {
      * @param scopes 授权范围
      * @return 访问令牌
      */
-    OAuth2AccessTokenDO grantImplicit(Long userId, Integer userType,
+    AdminOAuth2AccessTokenDO grantImplicit(Long userId, Integer userType,
                                       String clientId, List<String> scopes);
 
     /**
@@ -60,7 +60,7 @@ public interface OAuth2GrantService {
      * @param state 状态
      * @return 访问令牌
      */
-    OAuth2AccessTokenDO grantAuthorizationCodeForAccessToken(String clientId, String code,
+    AdminOAuth2AccessTokenDO grantAuthorizationCodeForAccessToken(String clientId, String code,
                                                              String redirectUri, String state);
 
     /**
@@ -74,7 +74,7 @@ public interface OAuth2GrantService {
      * @param scopes 授权范围
      * @return 访问令牌
      */
-    OAuth2AccessTokenDO grantPassword(String username, String password,
+    AdminOAuth2AccessTokenDO grantPassword(String username, String password,
                                       String clientId, List<String> scopes);
 
     /**
@@ -86,7 +86,7 @@ public interface OAuth2GrantService {
      * @param clientId 客户端编号
      * @return 访问令牌
      */
-    OAuth2AccessTokenDO grantRefreshToken(String refreshToken, String clientId);
+    AdminOAuth2AccessTokenDO grantRefreshToken(String refreshToken, String clientId);
 
     /**
      * 客户端模式
@@ -97,7 +97,7 @@ public interface OAuth2GrantService {
      * @param scopes 授权范围
      * @return 访问令牌
      */
-    OAuth2AccessTokenDO grantClientCredentials(String clientId, List<String> scopes);
+    AdminOAuth2AccessTokenDO grantClientCredentials(String clientId, List<String> scopes);
 
     /**
      * 移除访问令牌

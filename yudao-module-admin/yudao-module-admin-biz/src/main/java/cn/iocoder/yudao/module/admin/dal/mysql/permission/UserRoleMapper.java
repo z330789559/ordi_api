@@ -1,7 +1,7 @@
 package cn.iocoder.yudao.module.admin.dal.mysql.permission;
 
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
-import cn.iocoder.yudao.module.admin.dal.dataobject.permission.UserRoleDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.permission.AdminUserRoleDO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,28 +9,28 @@ import java.util.Collection;
 import java.util.List;
 
 @Mapper
-public interface UserRoleMapper extends BaseMapperX<UserRoleDO> {
+public interface UserRoleMapper extends BaseMapperX<AdminUserRoleDO> {
 
-    default List<UserRoleDO> selectListByUserId(Long userId) {
-        return selectList(UserRoleDO::getUserId, userId);
+    default List<AdminUserRoleDO> selectListByUserId(Long userId) {
+        return selectList(AdminUserRoleDO::getUserId, userId);
     }
 
     default void deleteListByUserIdAndRoleIdIds(Long userId, Collection<Long> roleIds) {
-        delete(new LambdaQueryWrapper<UserRoleDO>()
-                .eq(UserRoleDO::getUserId, userId)
-                .in(UserRoleDO::getRoleId, roleIds));
+        delete(new LambdaQueryWrapper<AdminUserRoleDO>()
+                .eq(AdminUserRoleDO::getUserId, userId)
+                .in(AdminUserRoleDO::getRoleId, roleIds));
     }
 
     default void deleteListByUserId(Long userId) {
-        delete(new LambdaQueryWrapper<UserRoleDO>().eq(UserRoleDO::getUserId, userId));
+        delete(new LambdaQueryWrapper<AdminUserRoleDO>().eq(AdminUserRoleDO::getUserId, userId));
     }
 
     default void deleteListByRoleId(Long roleId) {
-        delete(new LambdaQueryWrapper<UserRoleDO>().eq(UserRoleDO::getRoleId, roleId));
+        delete(new LambdaQueryWrapper<AdminUserRoleDO>().eq(AdminUserRoleDO::getRoleId, roleId));
     }
 
-    default List<UserRoleDO> selectListByRoleIds(Collection<Long> roleIds) {
-        return selectList(UserRoleDO::getRoleId, roleIds);
+    default List<AdminUserRoleDO> selectListByRoleIds(Collection<Long> roleIds) {
+        return selectList(AdminUserRoleDO::getRoleId, roleIds);
     }
 
 }

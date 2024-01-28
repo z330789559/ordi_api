@@ -19,6 +19,7 @@
         <module>yudao-module-mall</module>
         <module>yudao-module-pay</module>
         <module>yudao-module-admin</module>
+        <module>yudao-module-project</module>
     </modules>
 
     <name>${project.artifactId}</name>
@@ -26,7 +27,7 @@
     <url>https://github.com/YunaiV/ruoyi-vue-pro</url>
 
     <properties>
-        <revision>2.0.0-jdk8-snapshot</revision>
+        <revision>2.0.4-jdk8-snapshot</revision>
         <!-- Maven 相关 -->
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

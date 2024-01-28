@@ -5,7 +5,7 @@ import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.admin.controller.admin.tenant.vo.packages.*;
-import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.TenantPackageDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.AdminTenantPackageDO;
 import cn.iocoder.yudao.module.admin.service.tenant.TenantPackageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,7 +58,7 @@ public class TenantPackageController {
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('system:tenant-package:query')")
     public CommonResult<TenantPackageRespVO> getTenantPackage(@RequestParam("id") Long id) {
-        TenantPackageDO tenantPackage = tenantPackageService.getTenantPackage(id);
+        AdminTenantPackageDO tenantPackage = tenantPackageService.getTenantPackage(id);
         return success(BeanUtils.toBean(tenantPackage, TenantPackageRespVO.class));
     }
 
@@ -66,14 +66,14 @@ public class TenantPackageController {
     @Operation(summary = "获得租户套餐分页")
     @PreAuthorize("@ss.hasPermission('system:tenant-package:query')")
     public CommonResult<PageResult<TenantPackageRespVO>> getTenantPackagePage(@Valid TenantPackagePageReqVO pageVO) {
-        PageResult<TenantPackageDO> pageResult = tenantPackageService.getTenantPackagePage(pageVO);
+        PageResult<AdminTenantPackageDO> pageResult = tenantPackageService.getTenantPackagePage(pageVO);
         return success(BeanUtils.toBean(pageResult, TenantPackageRespVO.class));
     }
 
     @GetMapping({"/get-simple-list", "simple-list"})
     @Operation(summary = "获取租户套餐精简信息列表", description = "只包含被开启的租户套餐，主要用于前端的下拉选项")
     public CommonResult<List<TenantPackageSimpleRespVO>> getTenantPackageList() {
-        List<TenantPackageDO> list = tenantPackageService.getTenantPackageListByStatus(CommonStatusEnum.ENABLE.getStatus());
+        List<AdminTenantPackageDO> list = tenantPackageService.getTenantPackageListByStatus(CommonStatusEnum.ENABLE.getStatus());
         return success(BeanUtils.toBean(list, TenantPackageSimpleRespVO.class));
     }
 

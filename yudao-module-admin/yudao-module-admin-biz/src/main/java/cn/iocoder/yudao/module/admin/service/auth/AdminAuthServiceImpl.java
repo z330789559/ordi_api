@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.admin.api.logger.dto.LoginLogCreateReqDTO;
 import cn.iocoder.yudao.module.admin.api.sms.SmsCodeApi;
 import cn.iocoder.yudao.module.admin.controller.admin.auth.vo.*;
 import cn.iocoder.yudao.module.admin.convert.auth.AuthConvert;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2AccessTokenDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2AccessTokenDO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.user.AdminUserDO;
 import cn.iocoder.yudao.module.admin.enums.logger.LoginLogTypeEnum;
 import cn.iocoder.yudao.module.admin.enums.logger.LoginResultEnum;
@@ -51,8 +51,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     private LoginLogService loginLogService;
     @Resource
     private OAuth2TokenService oauth2TokenService;
-//    @Resource
-//    private SocialUserService socialUserService;
+
     @Resource
     private MemberService memberService;
     @Resource
@@ -193,7 +192,7 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         // 插入登陆日志
         createLoginLog(userId, username, logType, LoginResultEnum.SUCCESS);
         // 创建访问令牌
-        OAuth2AccessTokenDO accessTokenDO = oauth2TokenService.createAccessToken(userId, getUserType().getValue(),
+        AdminOAuth2AccessTokenDO accessTokenDO = oauth2TokenService.createAccessToken(userId, getUserType().getValue(),
                 OAuth2ClientConstants.CLIENT_ID_DEFAULT, null);
         // 构建返回结果
         return AuthConvert.INSTANCE.convert(accessTokenDO);
@@ -201,14 +200,14 @@ public class AdminAuthServiceImpl implements AdminAuthService {
 
     @Override
     public AuthLoginRespVO refreshToken(String refreshToken) {
-        OAuth2AccessTokenDO accessTokenDO = oauth2TokenService.refreshAccessToken(refreshToken, OAuth2ClientConstants.CLIENT_ID_DEFAULT);
+        AdminOAuth2AccessTokenDO accessTokenDO = oauth2TokenService.refreshAccessToken(refreshToken, OAuth2ClientConstants.CLIENT_ID_DEFAULT);
         return AuthConvert.INSTANCE.convert(accessTokenDO);
     }
 
     @Override
     public void logout(String token, Integer logType) {
         // 删除访问令牌
-        OAuth2AccessTokenDO accessTokenDO = oauth2TokenService.removeAccessToken(token);
+        AdminOAuth2AccessTokenDO accessTokenDO = oauth2TokenService.removeAccessToken(token);
         if (accessTokenDO == null) {
             return;
         }

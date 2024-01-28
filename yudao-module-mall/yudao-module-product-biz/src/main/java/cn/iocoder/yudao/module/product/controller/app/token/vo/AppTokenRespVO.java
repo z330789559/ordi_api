@@ -67,4 +67,7 @@ public class AppTokenRespVO {
 
     @Schema(description = "购买Gas费", requiredMode = Schema.RequiredMode.REQUIRED)
     private BigDecimal buyGasFee;
+
+    @Schema(description = "交易数", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer tradeCount;
 }

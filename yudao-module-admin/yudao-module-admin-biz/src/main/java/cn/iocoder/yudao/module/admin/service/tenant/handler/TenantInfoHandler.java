@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.admin.service.tenant.handler;
 
-import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.TenantDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.tenant.AdminTenantDO;
 
 /**
  * 租户信息处理
@@ -16,6 +16,6 @@ public interface TenantInfoHandler {
      *
      * @param tenant 租户信息
      */
-    void handle(TenantDO tenant);
+    void handle(AdminTenantDO tenant);
 
 }

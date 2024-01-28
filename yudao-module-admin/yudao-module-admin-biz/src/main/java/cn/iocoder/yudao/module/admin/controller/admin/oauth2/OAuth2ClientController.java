@@ -6,7 +6,7 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.client.OAuth2ClientPageReqVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.client.OAuth2ClientRespVO;
 import cn.iocoder.yudao.module.admin.controller.admin.oauth2.vo.client.OAuth2ClientSaveReqVO;
-import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.OAuth2ClientDO;
+import cn.iocoder.yudao.module.admin.dal.dataobject.oauth2.AdminOAuth2ClientDO;
 import cn.iocoder.yudao.module.admin.service.oauth2.OAuth2ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,7 +58,7 @@ public class OAuth2ClientController {
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('system:oauth2-client:query')")
     public CommonResult<OAuth2ClientRespVO> getOAuth2Client(@RequestParam("id") Long id) {
-        OAuth2ClientDO client = oAuth2ClientService.getOAuth2Client(id);
+        AdminOAuth2ClientDO client = oAuth2ClientService.getOAuth2Client(id);
         return success(BeanUtils.toBean(client, OAuth2ClientRespVO.class));
     }
 
@@ -66,7 +66,7 @@ public class OAuth2ClientController {
     @Operation(summary = "获得 OAuth2 客户端分页")
     @PreAuthorize("@ss.hasPermission('system:oauth2-client:query')")
     public CommonResult<PageResult<OAuth2ClientRespVO>> getOAuth2ClientPage(@Valid OAuth2ClientPageReqVO pageVO) {
-        PageResult<OAuth2ClientDO> pageResult = oAuth2ClientService.getOAuth2ClientPage(pageVO);
+        PageResult<AdminOAuth2ClientDO> pageResult = oAuth2ClientService.getOAuth2ClientPage(pageVO);
         return success(BeanUtils.toBean(pageResult, OAuth2ClientRespVO.class));
     }
 

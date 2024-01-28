@@ -2,6 +2,15 @@ server:
   port: 48080
 
 --- #################### 数据库相关配置 ####################
+wx:
+  mp:
+    appId: wxd1f0e7c3f9a8f5a0
+    secret: 0a4e2b2b0b0b0b0b0b0b0b0b0b0b0b0b
+    token: 0a4e2b2b0b0b0b0b0b0b0b0b0b0b0b0b
+    aesKey: 0a4e2b2b0b0b0b0b0b0b0b0b0b0b0b0b
+    hosts:
+      - 127.0.0.1
+
 
 spring:
   # 数据源配置项
@@ -49,14 +58,14 @@ spring:
       datasource:
         master:
           name: ordinals
-          url: jdbc:mysql://127.0.0.1:3306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
-          username: root
+          url: jdbc:mysql://47.236.143.182:3306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
+          username: test
           password: Tt7P2sEJHp8G
         slave: # 模拟从库，可根据自己需要修改
           name: ordinals
           lazy: true # 开启懒加载，保证启动速度
-          url: jdbc:mysql://127.0.0.1:3306/${spring.datasource.dynamic.datasource.slave.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
-          username: root
+          url: jdbc:mysql://47.236.143.182:3306/${spring.datasource.dynamic.datasource.slave.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
+          username: test
           password: Tt7P2sEJHp8G
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
@@ -64,7 +73,7 @@ spring:
     host: 127.0.0.1 # 地址
     port: 6379 # 端口
     database: 0 # 数据库索引
-    password: Tt7P2sEJHp8G # 密码，建议生产环境开启
+#    password: dev # 密码，建议生产环境开启
 
 --- #################### 定时任务相关配置 ####################
 

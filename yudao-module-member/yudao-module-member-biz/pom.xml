@@ -86,8 +86,7 @@
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
             <artifactId>yudao-module-pay-api</artifactId>
-            <version>2.0.0-jdk8-snapshot</version>
-            <scope>compile</scope>
+            <version>${revision}</version>
         </dependency>
 
     </dependencies>
