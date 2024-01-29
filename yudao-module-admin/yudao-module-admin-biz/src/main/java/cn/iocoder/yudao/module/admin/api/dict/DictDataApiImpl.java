@@ -1,11 +1,13 @@
 package cn.iocoder.yudao.module.admin.api.dict;
 
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.framework.dict.core.util.DictFrameworkUtils;
 import cn.iocoder.yudao.module.admin.api.dict.dto.DictDataRespDTO;
 import cn.iocoder.yudao.module.admin.dal.dataobject.dict.DictDataDO;
 import cn.iocoder.yudao.module.admin.service.dict.DictDataService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collection;
 
@@ -16,6 +18,12 @@ import java.util.Collection;
  */
 @Service
 public class DictDataApiImpl implements DictDataApi {
+
+
+    @PostConstruct
+    public void init() {
+         DictFrameworkUtils.init(this);
+    }
 
     @Resource
     private DictDataService dictDataService;

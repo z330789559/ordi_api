@@ -91,4 +91,6 @@ public interface ErrorCodeConstants {
     ErrorCode DEMO_TRANSFER_NOT_FOUND = new ErrorCode(1_007_901_001, "示例转账单不存在");
     ErrorCode DEMO_TRANSFER_FAIL_TRANSFER_ID_ERROR = new ErrorCode(1_007_901_002, "转账失败，转账单编号不匹配");
     ErrorCode DEMO_TRANSFER_FAIL_PRICE_NOT_MATCH = new ErrorCode(1_007_901_003, "转账失败，转账单金额不匹配");
+    ErrorCode WITHDRAW_NOT_FOUND = new ErrorCode(1_007_901_004, "提现单不存在");
+    ErrorCode WITHDRAW_STATUS_ERROR = new ErrorCode(1_007_901_005, "提现单状态错误");
 }

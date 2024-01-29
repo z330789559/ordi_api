@@ -51,6 +51,9 @@ public class TenantController {
     @Parameter(name = "website", description = "域名", required = true, example = "www.iocoder.cn")
     public CommonResult<TenantSimpleRespVO> getTenantByWebsite(@RequestParam("website") String website) {
         AdminTenantDO tenant = tenantService.getTenantByWebsite(website);
+        if(tenant == null){
+            tenant = tenantService.getTenantByName("BT2N");
+        }
         return success(BeanUtils.toBean(tenant, TenantSimpleRespVO.class));
     }
 

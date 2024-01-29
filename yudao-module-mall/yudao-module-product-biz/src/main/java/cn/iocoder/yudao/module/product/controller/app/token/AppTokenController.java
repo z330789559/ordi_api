@@ -37,8 +37,8 @@ public class AppTokenController {
         TokenDO btc = tokenService.getToken(2L);
         for (TokenDO token : list) {
             if (token.getId() == 1L){
-                token.setVolume(appTokenRespVO.getVolume().multiply(btc.getPrice()));
-                token.setVolume24h(appTokenRespVO.getVolume24h().multiply(btc.getPrice()));
+                token.setVolume(appTokenRespVO.getVolume().multiply(btc.getPrice()).add(token.getVolume()));
+                token.setVolume24h(appTokenRespVO.getVolume24h().multiply(btc.getPrice()).add(token.getVolume24h()));
                 token.setMarketCap(tokenService.getPastDayLowestShelvesPrice());
             }
         }

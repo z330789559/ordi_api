@@ -91,10 +91,11 @@ yudao:
       - /admin-api/system/oss/upload-multipart-files-base64/** # OSS 上传
   codegen:
     enable: true # 是否开启代码生成器
-    frontType: 30 # 前端类型，vue 或者 react
+    frontType: 20 # 前端类型，vue 或者 react
     dbSchemas: # 数据库 Schema 列表
       - ordinals
     basePackage: cn.iocoder.yudao # 项目的基础包名
+    modulePackage: project # 模块的包名
   sms-code:
     expireTimes: 300 # 短信验证码的过期时间，单位：秒
     sendFrequency: 10 # 短信验证码的最大发送次数

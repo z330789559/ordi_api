@@ -15,15 +15,12 @@ public class MemberSaveReqVO {
     private Long id;
 
     @Schema(description = "父ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "30922")
-    @NotNull(message = "父ID不能为空")
     private Long parentId;
 
     @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "手机号不能为空")
     private String mobile;
 
     @Schema(description = "父钱包地址", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "父钱包地址不能为空")
     private String parentAddress;
 
     @Schema(description = "钱包地址", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -31,15 +28,12 @@ public class MemberSaveReqVO {
     private String address;
 
     @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "密码不能为空")
     private String password;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
     @Schema(description = "注册 IP", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "注册 IP不能为空")
     private String registerIp;
 
     @Schema(description = "注册终端")
@@ -51,12 +45,9 @@ public class MemberSaveReqVO {
     @Schema(description = "最后登录时间")
     private LocalDateTime loginDate;
 
-    @Schema(description = "用户昵称", requiredMode = Schema.RequiredMode.REQUIRED, example = "芋艿")
-    @NotEmpty(message = "用户昵称不能为空")
     private String nickname;
 
     @Schema(description = "头像", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "头像不能为空")
     private String avatar;
 
     @Schema(description = "真实名字", example = "李四")
@@ -75,7 +66,6 @@ public class MemberSaveReqVO {
     private String mark;
 
     @Schema(description = "积分", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "积分不能为空")
     private Integer point;
 
     @Schema(description = "用户标签编号列表，以逗号分隔")
@@ -85,7 +75,6 @@ public class MemberSaveReqVO {
     private Long levelId;
 
     @Schema(description = "经验", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "经验不能为空")
     private Integer experience;
 
     @Schema(description = "用户分组编号", example = "5181")
@@ -103,7 +92,6 @@ public class MemberSaveReqVO {
     private String tree;
 
     @Schema(description = "等级水平", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "等级水平不能为空")
     private Integer level;
 
 }

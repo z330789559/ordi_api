@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.pojo.CommonOtherResult;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.web3j.EthUtils;
 import cn.iocoder.yudao.framework.security.core.annotations.PreAuthenticated;
+import cn.iocoder.yudao.module.pay.enums.wallet.TokenType;
 import cn.iocoder.yudao.module.system.dal.dataobject.web3.Web3UserDO;
 import cn.iocoder.yudao.module.system.service.web3.Web3UserService;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
@@ -65,10 +66,11 @@ public class AppPayWalletWithdrawController {
         Long uid = getLoginUserId();
         MemberUserDO user = memberUserService.getUser(getLoginUserId());
         Web3UserDO web3User = web3UserService.getWeb3UserById(Long.valueOf(user.getMobile()));
-
-        BigDecimal hasBtc = EthUtils.getErc20Balance(outContract, EthUtils.btcContractAddress);
-        if (hasBtc == null || hasBtc.compareTo(createReqVO.getPrice()) < 0) {
-            return CommonOtherResult.error(1001,"链上拥堵");
+        if(TokenType.BTC.getType().equals(createReqVO.getTokenType())) {
+            BigDecimal hasBtc = EthUtils.getErc20Balance(outContract, EthUtils.btcContractAddress);
+            if (hasBtc == null || hasBtc.compareTo(createReqVO.getPrice()) < 0) {
+                return CommonOtherResult.error(1001,"链上拥堵");
+            }
         }
 
         PayWalletWithdrawD0 withdraw = brokerageWithdrawService.createWithdraw(uid, createReqVO);

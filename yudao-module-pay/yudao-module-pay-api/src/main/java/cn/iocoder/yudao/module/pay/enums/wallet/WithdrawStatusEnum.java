@@ -1,6 +1,9 @@
 package cn.iocoder.yudao.module.pay.enums.wallet;
 
 import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,6 +11,7 @@ import java.util.Arrays;
 
 @AllArgsConstructor
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum  WithdrawStatusEnum implements IntArrayValuable {
     AUDITING(0, "审核中"),
     AUDIT_SUCCESS(10, "审核通过"),
@@ -21,6 +25,7 @@ public enum  WithdrawStatusEnum implements IntArrayValuable {
     /**
      * 状态
      */
+    @JsonValue
     private final Integer status;
     /**
      * 名字
@@ -31,5 +36,15 @@ public enum  WithdrawStatusEnum implements IntArrayValuable {
     @Override
     public int[] array() {
         return ARRAYS;
+    }
+
+    @JsonCreator
+    public static WithdrawStatusEnum fromStatus(Integer status) {
+        for (WithdrawStatusEnum value : values()) {
+            if (value.getStatus().equals(status)) {
+                return value;
+            }
+        }
+        return null;
     }
 }

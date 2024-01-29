@@ -15,4 +15,7 @@ public interface WithdrawService {
 
 
     void scanWithdraw();
+
+
+    void aduitWithdraw(Long id, WithdrawStatusEnum status, String remark);
 }

@@ -70,4 +70,6 @@ public class PayWalletWithdrawD0 extends BaseDO {
     private LocalDateTime expireTime;
 
     private Long walletId;
+
+    private String address;
 }
