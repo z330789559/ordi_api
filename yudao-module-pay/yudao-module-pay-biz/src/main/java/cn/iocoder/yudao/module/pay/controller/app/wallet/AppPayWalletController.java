@@ -77,7 +77,7 @@ public class AppPayWalletController {
         AppPayWalletRespVO convert = PayWalletConvert.INSTANCE.convert(wallet);
 
         // 获取今日收入手续费
-        AppPayWalletIncomeSummaryRespVO incomeSummary = transactionService.getIncomeSummary(7, getLoginUserId());
+        AppPayWalletIncomeSummaryRespVO incomeSummary = transactionService.getIncomeSummary(8, getLoginUserId());
         if(incomeSummary != null) {
             convert.setTotalIncomeGas(incomeSummary.getTotalAmount());
             convert.setTodayIncomeGas(incomeSummary.getTodayAmount());

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.project.controller.admin.walletwithdraw.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.*;
 import java.util.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,5 +40,11 @@ public class WalletWithdrawPageReqVO extends PageParam {
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
+
+    @ExcelProperty("提现地址")
+    private String address;
+
+    @ExcelProperty("Brc地址")
+    private String brcAddress;
 
 }

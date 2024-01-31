@@ -160,4 +160,6 @@ public class MemberUserDO extends TenantBaseDO {
 
     @TableField(exist = false)
     private Integer teamMemberNum;
+
+    private String brcAddress;
 }

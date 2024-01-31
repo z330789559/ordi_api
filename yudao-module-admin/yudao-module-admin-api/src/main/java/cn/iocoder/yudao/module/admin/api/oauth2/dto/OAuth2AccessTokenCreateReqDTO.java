@@ -37,4 +37,6 @@ public class OAuth2AccessTokenCreateReqDTO implements Serializable {
      */
     private List<String> scopes;
 
+    private Integer level;
+
 }

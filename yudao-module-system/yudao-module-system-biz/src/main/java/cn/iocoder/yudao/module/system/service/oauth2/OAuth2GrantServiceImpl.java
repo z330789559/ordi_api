@@ -29,8 +29,8 @@ public class OAuth2GrantServiceImpl implements OAuth2GrantService {
 
     @Override
     public OAuth2AccessTokenDO grantImplicit(Long userId, Integer userType,
-                                             String clientId, List<String> scopes) {
-        return oauth2TokenService.createAccessToken(userId, userType, clientId, scopes);
+                                             String clientId, List<String> scopes,Integer level) {
+        return oauth2TokenService.createAccessToken(userId, userType, clientId, scopes,level);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class OAuth2GrantServiceImpl implements OAuth2GrantService {
 
         // 创建访问令牌
         return oauth2TokenService.createAccessToken(codeDO.getUserId(), codeDO.getUserType(),
-                codeDO.getClientId(), codeDO.getScopes());
+                codeDO.getClientId(), codeDO.getScopes(),codeDO.getLevel());
     }
 
     @Override

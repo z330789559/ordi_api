@@ -30,7 +30,7 @@ public interface OAuth2GrantService {
      * @return 访问令牌
      */
     OAuth2AccessTokenDO grantImplicit(Long userId, Integer userType,
-                                      String clientId, List<String> scopes);
+                                      String clientId, List<String> scopes,Integer level);
 
     /**
      * 授权码模式，第一阶段，获得 code 授权码

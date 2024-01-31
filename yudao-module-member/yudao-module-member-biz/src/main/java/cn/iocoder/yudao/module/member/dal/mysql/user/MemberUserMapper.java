@@ -76,4 +76,7 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
 
     @Select("select count(id) from member_user where tree like concat('%',#{code},'%') or invitation_code = #{code}")
     Integer selectTeamMemberNum(@Param("code") String code);
+
+    @Select("select count(id) from member_user where parent_id = #{loginUserId}")
+	Integer selectCountByParentId(Long loginUserId);
 }

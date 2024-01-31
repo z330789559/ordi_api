@@ -89,6 +89,12 @@ public class SecurityFrameworkUtils {
         return loginUser != null ? loginUser.getId() : null;
     }
 
+
+
+    public static  Integer getUserLevel(){
+        LoginUser loginUser = getLoginUser();
+        return loginUser != null && loginUser.getLevel()!=null ? loginUser.getLevel() : 0;
+    }
     /**
      * 设置当前用户
      *

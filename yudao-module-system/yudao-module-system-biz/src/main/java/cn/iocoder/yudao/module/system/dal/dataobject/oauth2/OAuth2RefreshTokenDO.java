@@ -60,4 +60,6 @@ public class OAuth2RefreshTokenDO extends BaseDO {
      */
     private LocalDateTime expiresTime;
 
+    private Integer level;
+
 }

@@ -30,4 +30,6 @@ public class OAuth2AccessTokenCheckRespDTO implements Serializable {
      */
     private List<String> scopes;
 
+    private Integer level;
+
 }

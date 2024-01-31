@@ -24,8 +24,6 @@ public class WithDrawAuditReqVO {
 	@Positive(message = "id必须为正数")
 	private Long id;
 
-
-
 	private WithdrawStatusEnum status;
 
 	private String remark;

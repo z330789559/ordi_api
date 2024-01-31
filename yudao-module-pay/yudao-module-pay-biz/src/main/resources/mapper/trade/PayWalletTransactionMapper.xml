@@ -33,7 +33,10 @@
         SELECT ifnull(sum(price),0)                                                     as totalAmount,
                ifnull(sum(case when date (create_time) = curdate() then price else 0 end),0) as todayAmount
         FROM pay_wallet_transaction
-        WHERE wallet_id = #{walletId}
+        WHERE wallet_id  IN
+        <foreach collection="walletIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
           AND biz_type = #{bizType}
 
     </select>

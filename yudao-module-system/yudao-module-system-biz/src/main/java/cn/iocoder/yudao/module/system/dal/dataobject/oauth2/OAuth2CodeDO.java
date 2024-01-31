@@ -64,5 +64,6 @@ public class OAuth2CodeDO extends BaseDO {
      * 过期时间
      */
     private LocalDateTime expiresTime;
+    private Integer level;
 
 }

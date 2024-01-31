@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
@@ -69,18 +70,25 @@ public class WithdrawServiceImpl implements WithdrawService {
     @Transactional(rollbackFor = Exception.class)
     public PayWalletWithdrawD0 createWithdraw(Long userId, AppWithdrawCreateReqVO createReqVO) {
         // 1. 获取Token配置
-        TokenRespDTO tokenRespDTO = tokenApi.getToken(Long.valueOf(createReqVO.getTokenType()));
+        BigDecimal feePrice = BigDecimal.ZERO;
+
 
          int walletUserType = TokenType.BTC.getType().equals(createReqVO.getTokenType())?PayWalletUserTypeEnum.FINANCE.getType():PayWalletUserTypeEnum.CIRCULATION.getType();
-
-        BigDecimal feePrice = BigDecimal.ZERO;
+        if(TokenType.NU2T.getType().equals(createReqVO.getTokenType())) {
+            TokenRespDTO btcToken = tokenApi.getToken(2L);
+            feePrice = btcToken.getUsdPrice().multiply(BigDecimal.valueOf(100));
+            if(!StringUtils.hasText(createReqVO.getBrcAddress())){
+                throw exception(WITHDRAW_ADDRESS_NOT_NULL);
+            }
+        }
 
         // 2.2 判断资产是否足够
         PayWalletRespDTO walletRespDTO = payWalletApi.getOrCreateWallet(userId, walletUserType);
         BigDecimal finPrice = createReqVO.getPrice();
-        if (finPrice.compareTo(walletRespDTO.getBalance()) > 0) {
+        if (finPrice.compareTo(walletRespDTO.getBalance().add(feePrice)) > 0) {
             throw exception(WALLET_BALANCE_NOT_ENOUGH);
         }
+        PayWalletRespDTO feeWallet = payWalletApi.getOrCreateWallet(userId, PayWalletUserTypeEnum.FINANCE.getType());
 
         PayWalletWithdrawD0 withdraw = WithdrawConvert.INSTANCE.convert(createReqVO, userId, feePrice);
         withdraw.setStatus(WithdrawStatusEnum.AUDITING.getStatus());
@@ -89,19 +97,25 @@ public class WithdrawServiceImpl implements WithdrawService {
         withdraw.setWalletId(walletRespDTO.getId());
         withdraw.setType(walletUserType);
         withdraw.setAddress(createReqVO.getAddress());
-        return getSelf().submitOrder(userId, walletRespDTO.getId(), withdraw);
+        withdraw.setFeePrice(feePrice);
+        withdraw.setBrcAddress(createReqVO.getBrcAddress());
+        withdraw.setFeeWalletId(feeWallet.getId());
+
+        return getSelf().submitOrder(userId, walletRespDTO.getId(),withdraw);
     }
 
 
     @Transactional(rollbackFor = Exception.class)
-    public PayWalletWithdrawD0 submitOrder(Long userId, Long walletId, PayWalletWithdrawD0 withdraw) {
+    public PayWalletWithdrawD0 submitOrder(Long userId, Long walletId,  PayWalletWithdrawD0 withdraw) {
 
         withdrawMapper.insert(withdraw);
 
+
         // 冻结用户BTC
         payWalletApi.frozenWalletBalance(withdraw.getId(), PayWalletBizTypeEnum.WITHDRAW_FROZEN, walletId, withdraw.getPrice());
-        // 冻结手续费
-//        payWalletApi.frozenWalletBalance(withdraw.getId(), PayWalletBizTypeEnum.WITHDRAW_FROZEN_GAS, walletId, withdraw.getFeePrice());
+        if(1==withdraw.getType()) {
+            payWalletApi.frozenWalletBalance(withdraw.getId(), PayWalletBizTypeEnum.WITHDRAW_FROZEN_GAS, withdraw.getFeeWalletId(), withdraw.getFeePrice());
+        }
 
 //        tradeOrderHandler.afterOrderCreate(order, orderItem);
 
@@ -195,9 +209,10 @@ public class WithdrawServiceImpl implements WithdrawService {
         withdrawMapper.update(updateWrapper);
         if(WithdrawStatusEnum.AUDIT_SUCCESS.getStatus().equals(status.getStatus())){
             payWalletApi.unfrozenWalletBalanceNotRefund(id, PayWalletBizTypeEnum.WITHDRAW_SUCCESS_UNFROZEN, withdraw.getWalletId(), withdraw.getPrice());
-            return;
+            payWalletApi.unfrozenWalletBalanceNotRefund(id, PayWalletBizTypeEnum.WITHDRAW_SUCCESS_UNFROZEN_GAS, withdraw.getFeeWalletId(), withdraw.getFeePrice());
         }else{
             payWalletApi.unfrozenWalletBalanceNotRefund(withdraw.getId(), PayWalletBizTypeEnum.WITHDRAW_FAIL_UNFROZEN, withdraw.getWalletId(), withdraw.getPrice());
+            payWalletApi.unfrozenWalletBalanceNotRefund(withdraw.getId(), PayWalletBizTypeEnum.WITHDRAW_FAIL_UNFROZEN_GAS, withdraw.getFeeWalletId(), withdraw.getFeePrice());
         }
     }
 

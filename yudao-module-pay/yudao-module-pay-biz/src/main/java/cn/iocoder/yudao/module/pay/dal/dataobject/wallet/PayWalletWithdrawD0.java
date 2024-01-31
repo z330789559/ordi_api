@@ -72,4 +72,10 @@ public class PayWalletWithdrawD0 extends BaseDO {
     private Long walletId;
 
     private String address;
+
+    private String brcAddress;
+
+    private Long feeWalletId;
+
+
 }

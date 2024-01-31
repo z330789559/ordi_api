@@ -83,4 +83,6 @@ public class WalletWithdrawDO extends BaseDO {
      */
     private String address;
 
+    private String brcAddress;
+
 }

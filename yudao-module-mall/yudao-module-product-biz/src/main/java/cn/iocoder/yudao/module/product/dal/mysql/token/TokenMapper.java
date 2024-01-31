@@ -42,7 +42,7 @@ public interface TokenMapper extends BaseMapperX<TokenDO> {
 
     @Select("select " +
             "ifnull(min(price),0) as lowestPrice " +
-            " from ordi_product_item where create_time > date_sub(now(), interval 24 hour)   "
+            " from ordi_product_item where create_time > date_sub(now(), interval 24 hour)  and status=1 "
     )
     BigDecimal queryPastDayLowestPrice();
 

@@ -24,4 +24,6 @@ public class AppWithdrawCreateReqVO {
 
     @NotEmpty
     private String address;
+
+    private String brcAddress;
 }

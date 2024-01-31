@@ -73,4 +73,7 @@ public class WalletWithdrawRespVO {
     @ExcelProperty("提现地址")
     private String address;
 
+    @ExcelProperty("Brc地址")
+    private String brcAddress;
+
 }

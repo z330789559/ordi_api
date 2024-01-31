@@ -76,7 +76,8 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         // 创建 Token 令牌
         OAuth2AccessTokenRespDTO accessTokenRespDTO = oauth2TokenApi.createAccessToken(new OAuth2AccessTokenCreateReqDTO()
                 .setUserId(user.getId()).setUserType(getUserType().getValue())
-                .setClientId(OAuth2ClientConstants.CLIENT_ID_DEFAULT));
+                .setClientId(OAuth2ClientConstants.CLIENT_ID_DEFAULT)
+        );
         // 构建返回结果
         return AuthConvert.INSTANCE.convert(accessTokenRespDTO, address);
     }

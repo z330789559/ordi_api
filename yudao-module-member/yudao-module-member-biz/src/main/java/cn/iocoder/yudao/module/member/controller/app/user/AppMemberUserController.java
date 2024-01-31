@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.security.core.annotations.PreAuthenticated;
+import cn.iocoder.yudao.module.member.controller.app.auth.vo.AppMemberUserBindBrcAddressReqVO;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.convert.user.MemberUserConvert;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
@@ -40,6 +41,38 @@ public class AppMemberUserController {
 
         return success(MemberUserConvert.INSTANCE.convert(user));
     }
+
+
+
+    @PostMapping("bind-brc-address")
+    @Operation(summary = "绑定brc地址")
+    @PreAuthenticated
+    public CommonResult<Boolean> bindBrcAddress(@RequestBody @Valid AppMemberUserBindBrcAddressReqVO reqVO) {
+        if(null==getLoginUserId()){
+            return success(false);
+        }
+        userService.bindBrcAddress(getLoginUserId(), reqVO.getBrcAddress());
+        return success(true);
+    }
+
+
+    @GetMapping("/get-direct-invite")
+    @Operation(summary = "获得直接邀请人")
+    @PreAuthenticated
+    public CommonResult<DirectInvitedRespVo> getDirectInvitationUser() {
+        MemberUserDO user = userService.getUser(getLoginUserId());
+//        if (user.getParentId() == null) {
+//            return success(null);
+//        }
+
+        DirectInvitedRespVo respVo = new DirectInvitedRespVo();
+        respVo.setAddress(user.getParentAddress());
+
+        respVo.setDirectNum(userService.getDirectInvitedNum(getLoginUserId()));
+
+        return success(respVo);
+    }
+
     @GetMapping("/get-invitation")
     @Operation(summary = "获得邀请人列表")
     @PreAuthenticated

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.project.controller.admin.walletwithdraw.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -54,5 +55,12 @@ public class WalletWithdrawSaveReqVO {
 
     @Schema(description = "过期时间")
     private LocalDateTime expireTime;
+
+    @ExcelProperty("提现地址")
+    private String address;
+
+    @ExcelProperty("Brc地址")
+    private String brcAddress;
+
 
 }

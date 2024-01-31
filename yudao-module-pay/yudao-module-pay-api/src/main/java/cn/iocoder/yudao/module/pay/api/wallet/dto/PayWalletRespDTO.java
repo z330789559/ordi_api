@@ -24,4 +24,5 @@ public class PayWalletRespDTO {
     private BigDecimal payPrice;
 
     private BigDecimal gasFee;
+
 }

@@ -69,4 +69,9 @@ public interface MemberUserService {
 
     PageResult<MemberUserDO> getUserPage(AppMemberUserPageReqVO pageReqVO);
 
+    Integer getDirectInvitedNum(Long loginUserId);
+
+	void bindBrcAddress(Long loginUserId, String brcAddress);
+
+	List<Long> getDirectInvitedUserId(Long userId);
 }

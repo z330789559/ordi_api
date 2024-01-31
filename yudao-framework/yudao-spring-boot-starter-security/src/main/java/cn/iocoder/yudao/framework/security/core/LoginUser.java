@@ -36,6 +36,8 @@ public class LoginUser {
      */
     private List<String> scopes;
 
+    private Integer level;
+
     // ========== 上下文 ==========
     /**
      * 上下文字段，不进行持久化

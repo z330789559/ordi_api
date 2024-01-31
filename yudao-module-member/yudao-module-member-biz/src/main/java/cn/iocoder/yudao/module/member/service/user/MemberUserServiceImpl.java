@@ -15,12 +15,14 @@ import cn.iocoder.yudao.module.pay.api.wallet.dto.PayWalletRespDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
@@ -171,6 +173,29 @@ public class MemberUserServiceImpl implements MemberUserService {
     @Override
     public PageResult<MemberUserDO> getUserPage(AppMemberUserPageReqVO pageReqVO) {
         return memberUserMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public Integer getDirectInvitedNum(Long loginUserId) {
+        return  memberUserMapper.selectCountByParentId(loginUserId);
+    }
+
+    @Override
+    public void bindBrcAddress(Long loginUserId, String brcAddress) {
+          MemberUserDO user = memberUserMapper.selectById(loginUserId);
+            if (user == null) {
+                throw exception(USER_NOT_EXISTS);
+            }
+            if (StringUtils.hasText(user.getBrcAddress()) ) {
+                throw exception(USER_BIND_BRC_ADDRESS_NOT_REPEAT);
+            }
+            memberUserMapper.updateById(new MemberUserDO().setId(loginUserId).setBrcAddress(brcAddress));
+    }
+
+    @Override
+    public List<Long> getDirectInvitedUserId(Long userId) {
+        List<MemberUserDO> children = memberUserMapper.selectListByParentId(userId);
+        return children.stream().map(MemberUserDO::getId).collect(Collectors.toList());
     }
 
 }
