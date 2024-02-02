@@ -117,4 +117,7 @@ public class TradeOrderRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    @ExcelProperty("地址")
+    private String address;
+
 }

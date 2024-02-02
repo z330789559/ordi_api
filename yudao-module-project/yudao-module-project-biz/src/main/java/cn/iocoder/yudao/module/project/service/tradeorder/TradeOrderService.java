@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrder
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderItemDO;
+import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderPageDO;
 
 /**
  * 交易订单 Service 接口
@@ -51,7 +52,7 @@ public interface TradeOrderService {
      * @param pageReqVO 分页查询
      * @return 交易订单分页
      */
-    PageResult<AdminTradeOrderDO> getTradeOrderPage(TradeOrderPageReqVO pageReqVO);
+    PageResult<AdminTradeOrderPageDO> getTradeOrderPage(TradeOrderPageReqVO pageReqVO);
 
     // ==================== 子表（交易订单明细） ====================
 

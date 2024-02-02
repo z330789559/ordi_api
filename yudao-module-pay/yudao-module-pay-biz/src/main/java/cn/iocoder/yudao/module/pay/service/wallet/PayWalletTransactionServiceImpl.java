@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.pay.service.wallet;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
@@ -18,11 +19,14 @@ import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletTransactionMapper;
 import cn.iocoder.yudao.module.pay.dal.redis.no.PayNoRedisDAO;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.bo.WalletTransactionCreateReqBO;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+
+import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum.PAYMENT_GAS;
 
 /**
  * 钱包流水 Service 实现类
@@ -67,26 +71,22 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
         PayWalletTransactionDO transaction = PayWalletTransactionConvert.INSTANCE.convert(bo)
                 .setNo(noRedisDAO.generate(WALLET_NO_PREFIX));
         payWalletTransactionMapper.insert(transaction);
+        if(Objects.equals(bo.getBizType(), PAYMENT_GAS.getType()) && bo.getPrice().negate().compareTo(new BigDecimal(0.0000001)) > 0){
+            //更新用户的钱包余额
+            payWalletService.settleGas(bo.getWalletId(), bo.getPrice().negate(),bo.getBizId());
+        }
         return transaction;
     }
 
     @Override
     public AppPayWalletIncomeSummaryRespVO getIncomeSummary(Integer bizType, Long userId) {
         //查询父亲id是userid的所有子用户的金融钱吧id
-        List<Long> userIds=memberUserService.getDirectInvitedUserId(userId);
 
-        MemberUserDO user = memberUserService.getUser(userId);
-        //查询所有子用户的金融钱包id
-        List<PayWalletDO> wallets = payWalletService.getWalletByUserIds(userIds, PayWalletUserTypeEnum.FINANCE.getType());
-//        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, PayWalletUserTypeEnum.FINANCE.getType());
-        if(wallets==null|| wallets.isEmpty()){
+        PayWalletDO wallet = payWalletService.getOrCreateWallet(userId, PayWalletUserTypeEnum.FINANCE.getType());
+        if(wallet==null){
             return new AppPayWalletIncomeSummaryRespVO();
         }
-        AppPayWalletIncomeSummaryRespVO respvo = payWalletTransactionMapper.selectIncomeSummary(bizType, wallets.stream()
-                .map(PayWalletDO::getId).collect(Collectors.toList()));
-        BigDecimal rate = RewardRule.getRewardRate(user.getLevel());
-        respvo.setTodayAmount(respvo.getTodayAmount()==null?BigDecimal.ZERO:respvo.getTodayAmount().multiply(rate).setScale(8, RoundingMode.HALF_UP).negate());
-        respvo.setTotalAmount(respvo.getTotalAmount()==null?BigDecimal.ZERO:respvo.getTotalAmount().multiply(rate).setScale(8, RoundingMode.HALF_UP).negate());
+        AppPayWalletIncomeSummaryRespVO respvo = payWalletTransactionMapper.selectIncomeSummary(bizType, wallet.getId());
         return respvo;
     }
 

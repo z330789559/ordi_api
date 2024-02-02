@@ -12,6 +12,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
+import cn.iocoder.yudao.module.project.dal.dataobject.wallet.WalletMemberDO;
 import cn.iocoder.yudao.module.project.dal.mysql.wallet.AdminWalletMapper;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -67,7 +68,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public PageResult<WalletDO> getWalletPage(WalletPageReqVO pageReqVO) {
+    public PageResult<WalletMemberDO> getWalletPage(WalletPageReqVO pageReqVO) {
         return walletMapper.selectPage(pageReqVO);
     }
 

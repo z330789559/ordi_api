@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.project.controller.admin.wallet.vo.*;
 import cn.iocoder.yudao.module.project.dal.dataobject.wallet.WalletDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import cn.iocoder.yudao.module.project.dal.dataobject.wallet.WalletMemberDO;
 
 /**
  * 钱包 Service 接口
@@ -50,6 +51,6 @@ public interface WalletService {
      * @param pageReqVO 分页查询
      * @return 钱包分页
      */
-    PageResult<WalletDO> getWalletPage(WalletPageReqVO pageReqVO);
+    PageResult<WalletMemberDO> getWalletPage(WalletPageReqVO pageReqVO);
 
 }

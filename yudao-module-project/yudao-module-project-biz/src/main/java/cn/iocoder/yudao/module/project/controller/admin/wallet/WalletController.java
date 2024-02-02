@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import cn.iocoder.yudao.module.project.dal.dataobject.wallet.WalletMemberDO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +77,7 @@ public class WalletController {
     @Operation(summary = "获得钱包分页")
     @PreAuthorize("@ss.hasPermission('project:wallet:query')")
     public CommonResult<PageResult<WalletRespVO>> getWalletPage(@Valid WalletPageReqVO pageReqVO) {
-        PageResult<WalletDO> pageResult = walletService.getWalletPage(pageReqVO);
+        PageResult<WalletMemberDO> pageResult = walletService.getWalletPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, WalletRespVO.class));
     }
 
@@ -86,7 +88,7 @@ public class WalletController {
     public void exportWalletExcel(@Valid WalletPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<WalletDO> list = walletService.getWalletPage(pageReqVO).getList();
+        List<WalletMemberDO> list = walletService.getWalletPage(pageReqVO).getList();
         // 导出 Excel
         ExcelUtils.write(response, "钱包.xls", "数据", WalletRespVO.class,
                         BeanUtils.toBean(list, WalletRespVO.class));

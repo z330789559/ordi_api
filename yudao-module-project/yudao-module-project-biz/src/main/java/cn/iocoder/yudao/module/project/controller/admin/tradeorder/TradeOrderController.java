@@ -6,6 +6,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderItemDO;
+import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderPageDO;
+import cn.iocoder.yudao.module.trade.api.order.TradeOrderApi;
+import cn.iocoder.yudao.module.trade.enums.OrderOperatorTerminal;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +43,10 @@ public class TradeOrderController {
     @Resource
     private TradeOrderService tradeOrderService;
 
+
+    @Resource
+    private TradeOrderApi tradeOrderApi;
+
     @PostMapping("/create")
     @Operation(summary = "创建交易订单")
     @PreAuthorize("@ss.hasPermission('project:trade-order:create')")
@@ -52,6 +59,14 @@ public class TradeOrderController {
     @PreAuthorize("@ss.hasPermission('project:trade-order:update')")
     public CommonResult<Boolean> updateTradeOrder(@Valid @RequestBody TradeOrderSaveReqVO updateReqVO) {
         tradeOrderService.updateTradeOrder(updateReqVO);
+        return success(true);
+    }
+
+    @PostMapping("/close")
+    @Operation(summary = "关闭交易订单")
+    @PreAuthorize("@ss.hasPermission('project:trade-order:close')")
+    public CommonResult<Boolean> closeTradeOrder(@RequestParam("userId") Long userId,@RequestParam("id") Long id) {
+        tradeOrderApi.closeOrder(userId,id, OrderOperatorTerminal.ADMIN);
         return success(true);
     }
 
@@ -77,7 +92,7 @@ public class TradeOrderController {
     @Operation(summary = "获得交易订单分页")
     @PreAuthorize("@ss.hasPermission('project:trade-order:query')")
     public CommonResult<PageResult<TradeOrderRespVO>> getTradeOrderPage(@Valid TradeOrderPageReqVO pageReqVO) {
-        PageResult<AdminTradeOrderDO> pageResult = tradeOrderService.getTradeOrderPage(pageReqVO);
+        PageResult<AdminTradeOrderPageDO> pageResult = tradeOrderService.getTradeOrderPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, TradeOrderRespVO.class));
     }
 
@@ -88,7 +103,7 @@ public class TradeOrderController {
     public void exportTradeOrderExcel(@Valid TradeOrderPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<AdminTradeOrderDO> list = tradeOrderService.getTradeOrderPage(pageReqVO).getList();
+        List<AdminTradeOrderPageDO> list = tradeOrderService.getTradeOrderPage(pageReqVO).getList();
         // 导出 Excel
         ExcelUtils.write(response, "交易订单.xls", "数据", TradeOrderRespVO.class,
                         BeanUtils.toBean(list, TradeOrderRespVO.class));

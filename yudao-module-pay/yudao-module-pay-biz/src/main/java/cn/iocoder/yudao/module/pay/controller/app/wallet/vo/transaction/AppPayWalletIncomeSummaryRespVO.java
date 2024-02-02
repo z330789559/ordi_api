@@ -14,9 +14,9 @@ public class AppPayWalletIncomeSummaryRespVO {
     private Integer bizType;
 
     @Schema(description = "总金额",  example = "100")
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Schema(description = "今日金额", example = "100")
-    private BigDecimal todayAmount;
+    private BigDecimal todayAmount=BigDecimal.ZERO;
 
 }

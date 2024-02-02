@@ -46,13 +46,22 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
 
         for (MemberUserDO item : pageResult.getList()) {
             Integer teamMemberNum = selectTeamMemberNum(item.getInvitationCode());
-            item.setTeamMemberNum(teamMemberNum);
+            item.setTeamMemberNum(teamMemberNum-1);
             BigDecimal teamBalance = selectTeamBalance(item.getInvitationCode(), PayWalletUserTypeEnum.CIRCULATION.getType());
-            item.setTeamBalance(teamBalance);
+            BigDecimal personBalance = selectCurrentBalance(item.getInvitationCode(),PayWalletUserTypeEnum.CIRCULATION.getType());
+            item.setTeamBalance(teamBalance.add(personBalance.negate()));
+            item.setBalance(personBalance);
+
         }
 
         return pageResult;
     }
+
+
+    @Select("select ifnull(sum(balance),0) from pay_wallet where user_type = #{userType} and user_id in (" +
+            "select id from member_user where  invitation_code = #{code}" +
+            ")")
+    BigDecimal selectCurrentBalance(@Param("code") String code,@Param("userType") Integer userType);
 
     @Select("select invitation_code from member_user where parent_id = #{parentId}")
     List<String> selectDirectCodeByParentId(@Param("parentId") Long parentId);

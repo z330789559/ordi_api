@@ -162,4 +162,7 @@ public class MemberUserDO extends TenantBaseDO {
     private Integer teamMemberNum;
 
     private String brcAddress;
+
+    @TableField(exist = false)
+    private BigDecimal personalBalance;
 }

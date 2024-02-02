@@ -17,7 +17,7 @@ public enum PayWalletBizTypeEnum implements IntArrayValuable {
 
     RECHARGE(1, "充值"),
     RECHARGE_REFUND(2, "充值退款"),
-    PAYMENT(3, "支付"),
+    PAYMENT(3, "c"),
     PAYMENT_REFUND(4, "支付退款"),
     BUY(5, "购买"),
     SELL(6, "出售"),

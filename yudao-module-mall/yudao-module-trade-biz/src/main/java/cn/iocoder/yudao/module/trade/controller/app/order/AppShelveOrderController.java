@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.security.core.annotations.PreAuthenticated;
 import cn.iocoder.yudao.module.trade.controller.app.order.vo.*;
 import cn.iocoder.yudao.module.trade.dal.dataobject.order.ShelveOrderDO;
 import cn.iocoder.yudao.module.trade.dal.dataobject.order.TradeOrderDO;
+import cn.iocoder.yudao.module.trade.enums.OrderOperatorTerminal;
 import cn.iocoder.yudao.module.trade.service.order.ShelveOrderUpdateService;
 import cn.iocoder.yudao.module.trade.service.order.ShelveOrderUpdateServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public class AppShelveOrderController {
     @Operation(summary = "下架订单")
     @PreAuthenticated
     public CommonResult<Boolean> closeOrder(@RequestParam("id") Long id) {
-        shelveOrderUpdateService.closeOrder(getLoginUserId(), id);
+        shelveOrderUpdateService.closeOrder(getLoginUserId(), id, OrderOperatorTerminal.APP);
         return success(true);
     }
 }

@@ -15,6 +15,6 @@ public interface ShelveOrderUpdateService {
     TradeOrderDO createOrder(Long userId, String userIp, AppShelveOrderCreateReqVO createReqVO, Integer terminal);
 
     @Transactional(rollbackFor = Exception.class)
-    void closeOrder(Long userId, Long id);
+    void closeOrder(Long userId, Long id,Integer terminal);
 
 }

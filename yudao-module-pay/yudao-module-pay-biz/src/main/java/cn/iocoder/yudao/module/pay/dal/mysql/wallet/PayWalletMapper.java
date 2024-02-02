@@ -30,6 +30,21 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
         return update(null, lambdaUpdateWrapper);
     }
 
+
+    /**
+     * 当充值的时候，更新钱包
+     *
+     * @param id 钱包 id
+     * @param price 钱包金额
+     */
+    default int updateWhenReward(Long id, BigDecimal price){
+        LambdaUpdateWrapper<PayWalletDO> lambdaUpdateWrapper = new LambdaUpdateWrapper<PayWalletDO>()
+                .setSql(" balance = balance + " + price)
+                .eq(PayWalletDO::getId, id);
+        return update(null, lambdaUpdateWrapper);
+    }
+
+
     /**
      * 冻结钱包部分余额
      *

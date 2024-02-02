@@ -13,6 +13,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderItemDO;
+import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderPageDO;
 import cn.iocoder.yudao.module.project.dal.mysql.tradeorder.AdminTradeOrderItemMapper;
 import cn.iocoder.yudao.module.project.dal.mysql.tradeorder.AdminTradeOrderMapper;
 
@@ -83,7 +84,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     }
 
     @Override
-    public PageResult<AdminTradeOrderDO> getTradeOrderPage(TradeOrderPageReqVO pageReqVO) {
+    public PageResult<AdminTradeOrderPageDO> getTradeOrderPage(TradeOrderPageReqVO pageReqVO) {
         return adminTradeOrderMapper.selectPage(pageReqVO);
     }
 

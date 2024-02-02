@@ -17,6 +17,7 @@ import cn.iocoder.yudao.module.trade.dal.dataobject.order.TradeOrderItemDO;
 import cn.iocoder.yudao.module.trade.dal.mysql.order.ShelveOrderMapper;
 import cn.iocoder.yudao.module.trade.dal.mysql.order.TradeOrderItemMapper;
 import cn.iocoder.yudao.module.trade.dal.redis.no.TradeNoRedisDAO;
+import cn.iocoder.yudao.module.trade.enums.OrderOperatorTerminal;
 import cn.iocoder.yudao.module.trade.enums.order.TradeOrderItemStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANCE_NOT_ENOUGH;
@@ -56,22 +58,27 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
         createReqVO.setRate(tokenRespDTO.getUsdPrice());
 
         BigDecimal cirPrice = BigDecimal.valueOf(createReqVO.getQuantity());
-        BigDecimal finPrice = cirPrice.multiply(createReqVO.getPrice()).multiply(tokenRespDTO.getSellGasFee());
-        if (finPrice.compareTo(tokenRespDTO.getSellGasLimit()) > 0) {
-            finPrice = tokenRespDTO.getSellGasLimit();
+        BigDecimal sellFee = cirPrice.multiply(createReqVO.getPrice()).multiply(tokenRespDTO.getSellGasFee());
+        if(sellFee.compareTo(tokenRespDTO.getSellGasLimit()) > 0) {
+            sellFee = tokenRespDTO.getSellGasLimit();
         }
-        finPrice = finPrice.multiply(tokenRespDTO.getUsdPrice()); // USDT转BTC
+     // USDT转BTC
+        BigDecimal sellFeeBtc = sellFee.multiply(tokenRespDTO.getUsdPrice());
 
         PayWalletRespDTO cirWalletRespDTO = payWalletApi.getOrCreateWallet(userId, PayWalletUserTypeEnum.CIRCULATION.getType());
         if (cirPrice.compareTo(cirWalletRespDTO.getBalance()) > 0) {
             throw exception(WALLET_BALANCE_NOT_ENOUGH);
         }
-        cirWalletRespDTO.setPayPrice(cirPrice);
+
+       BigDecimal payPrice =cirPrice.multiply(createReqVO.getPrice()).add(cirPrice.multiply(createReqVO.getPrice()).multiply(tokenRespDTO.getBuyGasFee()));
+     // USDT转BTC
+        BigDecimal buyPriceBtc = payPrice.multiply(tokenRespDTO.getUsdPrice());
+        cirWalletRespDTO.setPayPrice(buyPriceBtc);
         PayWalletRespDTO finWalletRespDTO = payWalletApi.getOrCreateWallet(userId, PayWalletUserTypeEnum.FINANCE.getType());
-        if (finPrice.compareTo(finWalletRespDTO.getBalance()) > 0) {
+        if (sellFeeBtc.compareTo(finWalletRespDTO.getBalance()) > 0) {
             throw exception(WALLET_BALANCE_NOT_ENOUGH);
         }
-        finWalletRespDTO.setPayPrice(finPrice);
+        finWalletRespDTO.setPayPrice(sellFeeBtc);
 
         TradeOrderDO tradeOrderDO = submitOrder(userId, userIp, createReqVO, cirWalletRespDTO, finWalletRespDTO);
 
@@ -112,19 +119,32 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void closeOrder(Long userId, Long id) {
+    public void closeOrder(Long userId, Long billId, Integer terminal) {
         // 1. 获取我的订单
-        TradeOrderItemDO item = tradeOrderItemMapper.selectById(id);
+        TradeOrderItemDO item =new TradeOrderItemDO();
+        if(Objects.equals(terminal, OrderOperatorTerminal.ADMIN)){
+            item = tradeOrderItemMapper.selectOne(TradeOrderItemDO::getOrderId, billId);
+        }else{
+            item = tradeOrderItemMapper.selectById(billId);
+        }
+        if(item == null){
+            throw exception(ORDER_ITEM_NOT_FOUND);
+        }
         if (!item.getUserId().equals(userId)) {
             throw exception(ORDER_NOT_FOUND);
         }
+        Long id =item.getId();
         if (!item.getStatus().equals(TradeOrderItemStatusEnum.ON_SALE.getStatus())) {
             throw exception(ORDER_STATUS_NOT_ON_SALE);
         }
         // 2. 更新我的订单状态
         tradeOrderItemMapper.updateById(new TradeOrderItemDO().setId(id)
                 .setStatus(TradeOrderItemStatusEnum.OFF_SALE.getStatus()));
-        // 3. 更新余额
+
+        //3. 更新父订单状态
+        shelveOrderMapper.updateById(new TradeOrderDO().setId(item.getOrderId())
+                .setStatus(TradeOrderItemStatusEnum.OFF_SALE.getStatus()));
+        // 4. 更新余额
         PayWalletRespDTO cirWalletRespDTO = payWalletApi.getOrCreateWallet(userId, PayWalletUserTypeEnum.CIRCULATION.getType());
         payWalletApi.addWalletBalance(item.getId(), PayWalletBizTypeEnum.SHELVE_REFUND,
                 cirWalletRespDTO.getId(), item.getPayPrice());

@@ -53,4 +53,8 @@ public class WalletRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    @Schema(description = "用户地址")
+    @ExcelProperty("用户地址")
+    private String address;
+
 }

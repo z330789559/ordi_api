@@ -1,10 +1,13 @@
 package cn.iocoder.yudao.module.pay.service.wallet;
 
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
+import cn.iocoder.yudao.module.member.service.user.MemberUserService;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum;
+import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.bo.WalletTransactionCreateReqBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,9 @@ public class PayWalletServiceImpl implements PayWalletService {
 
     @Resource
     private PayWalletMapper walletMapper;
+
+    @Resource
+    private MemberUserService memberUserService;
     @Resource
     private PayWalletTransactionService walletTransactionService;
 
@@ -120,11 +126,13 @@ public class PayWalletServiceImpl implements PayWalletService {
         }
         // 1.2 更新钱包金额
         switch (bizType) {
+           case RECHARGE_GAS:
+          case REWARD_INCOME:
+              walletMapper.updateWhenReward(payWallet.getId(), price);
+               break;
             case RECHARGE:
-            case RECHARGE_GAS:
             case BUY:
             case SHELVE_REFUND:
-            case REWARD_INCOME:
             case TRANSFER_INCOME: { // 充值更新
                 walletMapper.updateWhenRecharge(payWallet.getId(), price);
                 break;
@@ -133,7 +141,6 @@ public class PayWalletServiceImpl implements PayWalletService {
                 throw new UnsupportedOperationException("待实现");
             }
         }
-
         // 2. 生成钱包流水
         WalletTransactionCreateReqBO transactionCreateReqBO = new WalletTransactionCreateReqBO()
                 .setWalletId(payWallet.getId()).setPrice(price).setBalance(payWallet.getBalance().add(price))
@@ -226,6 +233,20 @@ public class PayWalletServiceImpl implements PayWalletService {
 
     @Override
     public void commission(long uid, BigDecimal free) {
+
+    }
+
+    @Override
+    public void settleGas(Long walletId, BigDecimal price, Long bizId) {
+
+        PayWalletDO wallet = walletMapper.selectById(walletId);
+
+        MemberUserDO user = memberUserService.getUser(wallet.getUserId());
+        if(user.getParentId() == null){
+            return;
+        }
+        PayWalletDO parentWallet = walletMapper.selectByUserIdAndType(user.getParentId(), PayWalletUserTypeEnum.FINANCE.getType());
+        addWalletBalance(parentWallet.getId(), String.valueOf(bizId), PayWalletBizTypeEnum.RECHARGE_GAS, price);
 
     }
 

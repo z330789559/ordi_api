@@ -36,6 +36,8 @@ public class AppMemberUserInfoRespVO {
 
     private BigDecimal teamBalance;
 
+    private BigDecimal personalBalance;
+
     private Integer teamMemberNum;
 
     private String brcAddress;

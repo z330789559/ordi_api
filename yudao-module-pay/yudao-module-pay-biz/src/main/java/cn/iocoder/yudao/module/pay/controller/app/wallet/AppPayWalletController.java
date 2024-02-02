@@ -28,6 +28,7 @@ import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
+import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum.RECHARGE_GAS;
 
 /**
  * @author jason
@@ -77,7 +78,7 @@ public class AppPayWalletController {
         AppPayWalletRespVO convert = PayWalletConvert.INSTANCE.convert(wallet);
 
         // 获取今日收入手续费
-        AppPayWalletIncomeSummaryRespVO incomeSummary = transactionService.getIncomeSummary(8, getLoginUserId());
+        AppPayWalletIncomeSummaryRespVO incomeSummary = transactionService.getIncomeSummary(RECHARGE_GAS.getType(), getLoginUserId());
         if(incomeSummary != null) {
             convert.setTotalIncomeGas(incomeSummary.getTotalAmount());
             convert.setTodayIncomeGas(incomeSummary.getTodayAmount());

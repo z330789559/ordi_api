@@ -29,4 +29,9 @@ public interface TradeOrderApi {
     TradeOrderRespDTO getOrder(Long id);
 
 
+    /**
+     * 下架订单
+     */
+    void closeOrder(Long userId,Long id,Integer terminal);
+
 }

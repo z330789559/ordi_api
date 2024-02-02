@@ -61,7 +61,7 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
         return selectPage(pageParam, query);
     }
 
-    AppPayWalletIncomeSummaryRespVO selectIncomeSummary(@Param("bizType") Integer bizType, @Param("walletIds") List<Long> walletIds);
+    AppPayWalletIncomeSummaryRespVO selectIncomeSummary(@Param("bizType") Integer bizType, @Param("id") Long id);
 
 }
 

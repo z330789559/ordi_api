@@ -46,6 +46,7 @@ public interface MemberMapper extends BaseMapperX<MemberDO> {
                 .betweenIfPresent(MemberDO::getInvitationTime, reqVO.getInvitationTime())
                 .eqIfPresent(MemberDO::getTree, reqVO.getTree())
                 .eqIfPresent(MemberDO::getLevel, reqVO.getLevel())
+                .eqIfPresent(MemberDO::getId, reqVO.getId())
                 .orderByDesc(MemberDO::getId));
     }
 

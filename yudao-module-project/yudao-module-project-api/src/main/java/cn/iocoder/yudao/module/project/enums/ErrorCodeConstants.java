@@ -10,4 +10,6 @@ public  interface  ErrorCodeConstants {
 	ErrorCode TRADE_ORDER_NOT_EXISTS = new ErrorCode(5, "交易订单不存在");
 	ErrorCode WALLET_WITHDRAW_NOT_EXISTS = new ErrorCode(6, "提现不存在");
 
+	ErrorCode WALLET_TRANSACTION_NOT_EXISTS = new ErrorCode(7, "钱包流水不存在");
+
 }

@@ -57,7 +57,6 @@ public class AppPayWalletWithdrawController {
     @Value("${contract.outKey}")
     private String outPrivateKey;
 
-
     @PostMapping("/create")
     @Operation(summary = "创建提现")
     @PreAuthenticated

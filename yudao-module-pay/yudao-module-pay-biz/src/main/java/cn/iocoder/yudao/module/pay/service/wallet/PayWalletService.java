@@ -95,4 +95,5 @@ public interface PayWalletService {
     // 手续费分拥
     void commission(long uid,BigDecimal free);
 
+	void settleGas(Long walletId, BigDecimal price,Long bizId);
 }
