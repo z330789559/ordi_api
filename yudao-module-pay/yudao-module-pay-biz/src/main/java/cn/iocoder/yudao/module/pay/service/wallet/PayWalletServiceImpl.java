@@ -149,6 +149,12 @@ public class PayWalletServiceImpl implements PayWalletService {
     }
 
     @Override
+    public PayWalletTransactionDO addBatchWalletBalance(List<Long> walletIds, String bizId, PayWalletBizTypeEnum bizType, BigDecimal price) {
+        walletIds.forEach(walletId -> addWalletBalance(walletId, bizId, bizType, price));
+        return null;
+    }
+
+    @Override
     public PayWalletTransactionDO frozenWalletBalance(Long walletId, Long bizId, PayWalletBizTypeEnum bizType, BigDecimal price) {
         // 1.1 获取钱包
         PayWalletDO payWallet = getWallet(walletId);
@@ -246,7 +252,8 @@ public class PayWalletServiceImpl implements PayWalletService {
             return;
         }
         PayWalletDO parentWallet = walletMapper.selectByUserIdAndType(user.getParentId(), PayWalletUserTypeEnum.FINANCE.getType());
-        addWalletBalance(parentWallet.getId(), String.valueOf(bizId), PayWalletBizTypeEnum.RECHARGE_GAS, price);
+        addWalletBalance(parentWallet.getId(), String.valueOf(bizId), PayWalletBizTypeEnum.RECHARGE_GAS, price.multiply(new BigDecimal("0.1")));
+        addWalletBalance(walletId, String.valueOf(bizId), PayWalletBizTypeEnum.REWARD_POOL_INCOME, price.multiply(new BigDecimal("0.9")));
 
     }
 

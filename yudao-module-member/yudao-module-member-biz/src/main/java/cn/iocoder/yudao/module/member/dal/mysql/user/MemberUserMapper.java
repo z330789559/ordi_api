@@ -88,4 +88,7 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
 
     @Select("select count(id) from member_user where parent_id = #{loginUserId}")
 	Integer selectCountByParentId(Long loginUserId);
+   //查询member_user和pay_wallet关联，根据member_user level查询pay_wallet id
+    @Select("select id from pay_wallet where user_id in (select id from member_user where level >= #{level}) and user_type = #{user_type}")
+	List<Long> selectWalletIdByLevel(@Param("level") Integer level, @Param("user_type") Integer user_type);
 }

@@ -16,6 +16,8 @@ public interface RedisKeyConstants {
      */
     String PAY_NOTIFY_LOCK = "pay_notify:lock:%d";
 
+    String REWARD_LIMIT="tx:reward_limit";
+
     /**
      * 支付序号的缓存
      *

@@ -8,9 +8,11 @@ import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletIncomeSummaryRespVO;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
+import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.UnAssignRewardSummaryDo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -63,6 +65,9 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
 
     AppPayWalletIncomeSummaryRespVO selectIncomeSummary(@Param("bizType") Integer bizType, @Param("id") Long id);
 
+    //sql 计算所有的price加入总金额，deleted=0的加入当日金额的sql
+    @Select("select sum(price) as totalAmount, sum(case when deleted = 0 then price else 0 end) as todayAmount from pay_wallet_transaction where biz_Type = 21")
+	UnAssignRewardSummaryDo selectRewardSummary();
 }
 
 

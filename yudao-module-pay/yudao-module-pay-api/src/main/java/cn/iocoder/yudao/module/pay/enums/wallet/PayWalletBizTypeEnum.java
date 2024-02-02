@@ -34,7 +34,9 @@ public enum PayWalletBizTypeEnum implements IntArrayValuable {
     REWARD_INCOME(17, "分佣收益"),
     REWARD_PAYMENT(18, "分佣支出"),
     TRANSFER_INCOME(19, "转入"),
+    REWARD_POOL_INCOME(21, "奖励池收益"),
     TRANSFER_PAYMENT(20, "转出");
+
 
     // TODO 后续增加
 

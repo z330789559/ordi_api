@@ -4,21 +4,30 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.tenant.core.context.TenantContextHolder;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
+import cn.iocoder.yudao.module.member.enums.MemberLevelConstants;
 import cn.iocoder.yudao.module.member.service.user.MemberUserService;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletIncomeSummaryRespVO;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionPageReqVO;
 import cn.iocoder.yudao.module.pay.convert.wallet.PayWalletTransactionConvert;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
+import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.UnAssignRewardSummaryDo;
 import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletTransactionMapper;
 import cn.iocoder.yudao.module.pay.dal.redis.no.PayNoRedisDAO;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
+import cn.iocoder.yudao.module.pay.enums.wallet.TokenType;
 import cn.iocoder.yudao.module.pay.service.wallet.bo.WalletTransactionCreateReqBO;
+import cn.iocoder.yudao.module.product.api.item.dto.TokenRespDTO;
+import cn.iocoder.yudao.module.product.api.token.TokenApi;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +36,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 
 import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum.PAYMENT_GAS;
+import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum.REWARD_INCOME;
+import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum.REWARD_POOL_INCOME;
 
 /**
  * 钱包流水 Service 实现类
@@ -43,15 +54,25 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
      */
     private static final String WALLET_NO_PREFIX = "W";
 
+    private static final String REWARD_NO_PREFIX = "";
+
     @Resource
     private MemberUserService memberUserService;
 
     @Resource
     private PayWalletService payWalletService;
+
     @Resource
     private PayWalletTransactionMapper payWalletTransactionMapper;
     @Resource
     private PayNoRedisDAO noRedisDAO;
+
+    @Resource
+    private TokenApi tokenApi;
+
+
+    @Resource
+    private Executor executor;
 
     @Override
     public PageResult<PayWalletTransactionDO> getWalletTransactionPage(Long userId, Integer userType,
@@ -89,5 +110,79 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
         AppPayWalletIncomeSummaryRespVO respvo = payWalletTransactionMapper.selectIncomeSummary(bizType, wallet.getId());
         return respvo;
     }
+
+    @Override
+    public UnAssignRewardSummaryDo getUnAssignRewardSummary() {
+        TokenRespDTO token = tokenApi.getToken(Long.valueOf(TokenType.BTC.getType()));
+        UnAssignRewardSummaryDo res = payWalletTransactionMapper.selectRewardSummary();
+        res.setTodayAmount(res.getTodayAmount().divide(token.getUsdPrice(),RoundingMode.DOWN));
+        res.setTotalAmount(res.getTotalAmount().divide(token.getUsdPrice(),RoundingMode.DOWN));
+        return res;
+    }
+
+    @Override
+    public void assiginReward() {
+        TenantContextHolder.setIgnore(true);
+        UnAssignRewardSummaryDo rewardAmountDo = payWalletTransactionMapper.selectRewardSummary();
+        TokenRespDTO token = tokenApi.getToken(Long.valueOf(TokenType.BTC.getType()));
+        if(rewardAmountDo.getTodayAmount().divide(token.getUsdPrice(),RoundingMode.DOWN).compareTo(new BigDecimal(noRedisDAO.getRewardLimit()))<0){
+            return;
+        }
+        String bizId = noRedisDAO.generate(REWARD_NO_PREFIX);
+         lockAllUnAssignReward(bizId);
+        executor.execute(() -> {
+            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_1);
+            if(ids.isEmpty()){
+                return;
+            }
+            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_1_REWARD_RATE), bizId);
+        });
+        executor.execute(() -> {
+            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_2);
+            if(ids.isEmpty()){
+                return;
+            }
+            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_2_REWARD_RATE), bizId);
+        });
+        executor.execute(() -> {
+            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_3);
+            if(ids.isEmpty()){
+                return;
+            }
+            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_3_REWARD_RATE), bizId);
+        });
+        executor.execute(() -> {
+            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_4);
+            if(ids.isEmpty()){
+                return;
+            }
+            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_4_REWARD_RATE), bizId);
+        });
+        executor.execute(() -> {
+            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_5);
+            if(ids.isEmpty()){
+                return;
+            }
+            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_5_REWARD_RATE), bizId);
+        });
+    }
+
+    private void lockAllUnAssignReward(String bizId) {
+        payWalletTransactionMapper.update(null, new LambdaUpdateWrapper<PayWalletTransactionDO>()
+                .setSql("remark='"+bizId+"',deleted=1")
+                .eq(PayWalletTransactionDO::getBizType, REWARD_POOL_INCOME.getType())
+                .eq(PayWalletTransactionDO::getDeleted, 0));
+    }
+
+    public  void assignLevelReward(List<Long> walletIds, BigDecimal rewardAmount,String bizId) {
+        BigDecimal perAmount = rewardAmount.divide(new BigDecimal(walletIds.size()), 8, RoundingMode.HALF_UP);
+        payWalletService.addBatchWalletBalance(walletIds, bizId,REWARD_INCOME, perAmount);
+    }
+
 
 }

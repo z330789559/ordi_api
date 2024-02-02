@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum.FINANCE;
 
 /**
  * 会员 User Service 实现类
@@ -196,6 +197,11 @@ public class MemberUserServiceImpl implements MemberUserService {
     public List<Long> getDirectInvitedUserId(Long userId) {
         List<MemberUserDO> children = memberUserMapper.selectListByParentId(userId);
         return children.stream().map(MemberUserDO::getId).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Long> getMemberUserWalletListByLevel(Integer level1) {
+        return  memberUserMapper.selectWalletIdByLevel(level1,FINANCE.getType());
     }
 
 }

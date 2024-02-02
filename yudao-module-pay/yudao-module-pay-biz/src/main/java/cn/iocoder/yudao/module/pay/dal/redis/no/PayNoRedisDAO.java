@@ -36,4 +36,15 @@ public class PayNoRedisDAO {
         return noPrefix + no;
     }
 
+    public String getRewardLimit(){
+        String rate = stringRedisTemplate.opsForValue().get(RedisKeyConstants.REWARD_LIMIT);
+        if(rate == null){
+            stringRedisTemplate.opsForValue().set(RedisKeyConstants.REWARD_LIMIT,"20000");
+            return "20000";
+        }
+        return rate;
+    }
+
+
+
 }

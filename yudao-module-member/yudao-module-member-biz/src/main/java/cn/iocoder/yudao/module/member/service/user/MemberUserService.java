@@ -74,4 +74,6 @@ public interface MemberUserService {
 	void bindBrcAddress(Long loginUserId, String brcAddress);
 
 	List<Long> getDirectInvitedUserId(Long userId);
+
+	List<Long> getMemberUserWalletListByLevel(Integer level1);
 }

@@ -70,6 +70,9 @@ public interface PayWalletService {
     PayWalletTransactionDO addWalletBalance(Long walletId, String bizId,
                                             PayWalletBizTypeEnum bizType, BigDecimal price);
 
+    PayWalletTransactionDO addBatchWalletBalance(List<Long> walletId, String bizId,
+            PayWalletBizTypeEnum bizType, BigDecimal price);
+
     PayWalletTransactionDO frozenWalletBalance(Long walletId,Long bizId,
                                                PayWalletBizTypeEnum bizType, BigDecimal price);
 

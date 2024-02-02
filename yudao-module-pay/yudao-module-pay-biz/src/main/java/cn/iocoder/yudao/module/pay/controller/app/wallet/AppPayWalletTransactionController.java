@@ -8,6 +8,7 @@ import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWa
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletTransactionRespVO;
 import cn.iocoder.yudao.module.pay.convert.wallet.PayWalletTransactionConvert;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletTransactionDO;
+import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.UnAssignRewardSummaryDo;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletTransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,5 +54,16 @@ public class AppPayWalletTransactionController {
             @Valid AppPayWalletTransactionPageReqVO pageReqVO) {
         PageResult<PayWalletTransactionDO> result = payWalletTransactionService.getWalletTransactionAllPage(pageReqVO);
         return success(PayWalletTransactionConvert.INSTANCE.convertPage(result));
+    }
+
+
+    @GetMapping("/reward-summary")
+    @Operation(summary = "奖金池金额")
+    public CommonResult<AppPayWalletIncomeSummaryRespVO> getRewardSummary() {
+        UnAssignRewardSummaryDo rewardPool= payWalletTransactionService.getUnAssignRewardSummary();
+        AppPayWalletIncomeSummaryRespVO respVO = new AppPayWalletIncomeSummaryRespVO();
+        respVO.setTodayAmount(rewardPool.getTodayAmount());
+        respVO.setTotalAmount(rewardPool.getTotalAmount());
+        return success(respVO);
     }
 }

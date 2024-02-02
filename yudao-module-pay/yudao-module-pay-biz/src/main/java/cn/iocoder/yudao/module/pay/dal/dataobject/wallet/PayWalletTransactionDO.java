@@ -65,4 +65,6 @@ public class PayWalletTransactionDO extends BaseDO {
      * 交易后余额，单位分
      */
     private BigDecimal balance;
+
+    private String remark;
 }
