@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.pay.service.withdraw;
 
+import java.math.BigDecimal;
+
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.withdraw.AppWithdrawCreateReqVO;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletWithdrawD0;
 import cn.iocoder.yudao.module.pay.enums.wallet.WithdrawStatusEnum;
@@ -11,7 +13,7 @@ public interface WithdrawService {
      * @param userId      会员用户编号
      * @param createReqVO 创建信息
      */
-    PayWalletWithdrawD0 createWithdraw(Long userId, AppWithdrawCreateReqVO createReqVO);
+    PayWalletWithdrawD0 createWithdraw(Long userId, AppWithdrawCreateReqVO createReqVO, BigDecimal ethPrice);
 
 
     void scanWithdraw();

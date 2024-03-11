@@ -19,4 +19,6 @@ public class UnAssignRewardSummaryDo {
 
   @Schema(description = "今日金额", example = "100")
   private BigDecimal todayAmount=BigDecimal.ZERO;
+
+  private BigDecimal upLimit = BigDecimal.ZERO;
 }

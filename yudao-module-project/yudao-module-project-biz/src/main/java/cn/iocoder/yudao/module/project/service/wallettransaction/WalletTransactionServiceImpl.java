@@ -6,6 +6,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import cn.iocoder.yudao.framework.mybatis.core.util.MyBatisUtils;
+import cn.iocoder.yudao.framework.tenant.core.context.TenantContextHolder;
 import cn.iocoder.yudao.module.project.controller.admin.wallettransaction.vo.*;
 import cn.iocoder.yudao.module.project.dal.dataobject.wallettransaction.WalletTransactionAddressDO;
 import cn.iocoder.yudao.module.project.dal.dataobject.wallettransaction.WalletTransactionDO;
@@ -14,6 +17,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.project.dal.mysql.wallettransaction.WalletTransactionMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.poi.ss.formula.functions.T;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.project.enums.ErrorCodeConstants.*;
@@ -69,7 +75,13 @@ public class WalletTransactionServiceImpl implements WalletTransactionService {
 
     @Override
     public PageResult<WalletTransactionAddressDO> getWalletTransactionPage(WalletTransactionPageReqVO pageReqVO) {
-        return walletTransactionMapper.selectPage(pageReqVO);
+        TenantContextHolder.setIgnore(true);
+        IPage<WalletTransactionAddressDO> mpPage = MyBatisUtils.buildPage(pageReqVO);
+        Page<WalletTransactionAddressDO> res = walletTransactionMapper.selectBySqlPage(mpPage, pageReqVO);
+        PageResult<WalletTransactionAddressDO> pageResult =new PageResult<>();
+        pageResult.setList(res.getRecords());
+        pageResult.setTotal(res.getTotal());
+        return pageResult;
     }
 
 }

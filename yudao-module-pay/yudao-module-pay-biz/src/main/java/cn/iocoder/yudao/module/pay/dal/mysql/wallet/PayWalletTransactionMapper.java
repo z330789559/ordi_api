@@ -63,6 +63,7 @@ public interface PayWalletTransactionMapper extends BaseMapperX<PayWalletTransac
         return selectPage(pageParam, query);
     }
 
+    @Select("select sum(price) as totalAmount ,  sum(case when  TIMEDIFF(NOW(), create_time) <='24:00:00' then price else 0 end) as todyAmount   from pay_wallet_transaction where biz_Type =#{bizType} and wallet_id=#{id}")
     AppPayWalletIncomeSummaryRespVO selectIncomeSummary(@Param("bizType") Integer bizType, @Param("id") Long id);
 
     //sql 计算所有的price加入总金额，deleted=0的加入当日金额的sql

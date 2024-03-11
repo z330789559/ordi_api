@@ -46,5 +46,13 @@ public class PayNoRedisDAO {
     }
 
 
+    public int getUnStakeLimit(String stakeLockKey) {
 
+        String days = stringRedisTemplate.opsForValue().get(stakeLockKey);
+        if(days == null){
+            stringRedisTemplate.opsForValue().set(stakeLockKey,"3");
+            return 3;
+        }
+        return Integer.parseInt(days);
+    }
 }

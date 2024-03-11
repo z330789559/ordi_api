@@ -195,5 +195,6 @@ yudao:
       - rep_demo_jianpiao
       - tmp_report_data_1
       - tmp_report_data_income
+      - pay_wallet_stake
 debug: false
 

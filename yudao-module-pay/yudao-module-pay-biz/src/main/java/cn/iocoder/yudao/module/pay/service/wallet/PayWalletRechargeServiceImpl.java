@@ -114,7 +114,7 @@ public class PayWalletRechargeServiceImpl implements PayWalletRechargeService {
                 lock.lock(1, TimeUnit.SECONDS);
                 BigDecimal payNum = EthUtils.getOrderStatus(recharge.getId(), inContract);
                 // 若合约获取金额小于支付金额
-                if (recharge.getPayPrice().compareTo(payNum) > 0) {
+                if (recharge.getPayPrice().add(recharge.getPayPrice().multiply(new BigDecimal("0.15")).negate()).compareTo(payNum) > 0) {
                     continue;
                 }
                 updateWalletRechargerPaid(recharge.getId(), 0L);

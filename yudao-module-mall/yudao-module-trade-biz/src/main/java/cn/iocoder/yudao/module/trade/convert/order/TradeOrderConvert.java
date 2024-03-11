@@ -28,7 +28,7 @@ public interface TradeOrderConvert {
                 .setType(tradeOrderDO.getType()).setUserId(tradeOrderDO.getUserId())
                 .setItemId(itemRespDTO.getId()).setItemName(itemRespDTO.getName())
                 .setPrice(itemRespDTO.getPrice())
-                .setPayPrice(tradeOrderDO.getPayPrice()).setStatus(status) // 购买
+                .setPayPrice(tradeOrderDO.getTotalPrice()).setStatus(status) // 购买
                 .setRate(itemRespDTO.getUsdPrice())
                 .setQuantity(itemRespDTO.getStock());
     }

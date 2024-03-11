@@ -45,6 +45,7 @@ public interface AdminWalletMapper extends BaseMapperX<WalletDO> {
                 .select(MemberDO::getAddress)
                 .join("INNER JOIN", MemberDO.class,
             on -> on.eq(WalletMemberDO::getUserId, MemberDO::getId)
+                    .eq(null!=reqVO.getId(),WalletDO::getId,reqVO.getId())
                     .eq(null!=reqVO.getAddress(),MemberDO::getAddress,reqVO.getAddress())
                     .eq(null!=reqVO.getUserType(),WalletDO::getUserType,reqVO.getUserType())
                     .eq(null!=reqVO.getUserId(),WalletDO::getUserId,reqVO.getUserId())

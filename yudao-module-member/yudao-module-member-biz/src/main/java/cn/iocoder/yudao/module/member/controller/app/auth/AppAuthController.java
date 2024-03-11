@@ -62,4 +62,14 @@ public class AppAuthController {
     public CommonResult<AppAuthLoginRespVO> web3Login(@RequestBody @Valid AppAuthWeb3LoginReqVO reqVO) {
         return success(authService.web3Login(reqVO));
     }
+
+
+    @GetMapping("/token")
+    @Operation(summary = "获取token")
+    public CommonResult<AppAuthLoginRespVO> token(@RequestParam String address) {
+
+        return success(authService.token(address));
+    }
+
+
 }

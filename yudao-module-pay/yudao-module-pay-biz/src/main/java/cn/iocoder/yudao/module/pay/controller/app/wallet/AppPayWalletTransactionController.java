@@ -64,6 +64,7 @@ public class AppPayWalletTransactionController {
         AppPayWalletIncomeSummaryRespVO respVO = new AppPayWalletIncomeSummaryRespVO();
         respVO.setTodayAmount(rewardPool.getTodayAmount());
         respVO.setTotalAmount(rewardPool.getTotalAmount());
+        respVO.setUpLimit(rewardPool.getUpLimit());
         return success(respVO);
     }
 }

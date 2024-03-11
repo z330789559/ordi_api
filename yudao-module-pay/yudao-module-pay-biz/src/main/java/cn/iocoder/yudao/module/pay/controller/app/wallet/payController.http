@@ -1,0 +1,51 @@
+GET http://127.0.0.1:48080/app-api/pay/wallet-transaction/reward-summary
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer test245
+tenant-id: 1
+
+####
+GET http://127.0.0.1:48080//app-api/pay/wallet/get
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer dbffeb7215be46a08cfeb9e4eb621372
+tenant-id: 1
+
+
+###stake create
+
+POST http://127.0.0.1:48080//app-api/pay/wallet-stake/create
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer 66b2cd32ac7f47ba8ac5e12bab163279
+tenant-id: 1
+Content-Type: application/json
+Content-Length: 35
+
+{
+  "price": 0.001,
+  "userType": 0
+}
+
+### unstake
+
+PUT http://127.0.0.1:48080//app-api/pay/wallet-stake/unstake/5
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer 66b2cd32ac7f47ba8ac5e12bab163279
+tenant-id: 1
+Content-Type: application/json
+
+
+### stake list
+GET http://127.0.0.1:48080//app-api/pay/wallet-stake/page?pageSize=10&pageNum=1
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer 66b2cd32ac7f47ba8ac5e12bab163279
+tenant-id: 1
+

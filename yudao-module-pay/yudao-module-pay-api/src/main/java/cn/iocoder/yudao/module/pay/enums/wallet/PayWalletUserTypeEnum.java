@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.pay.enums.wallet;
 
 import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +17,18 @@ public enum PayWalletUserTypeEnum  implements IntArrayValuable {
     /**
      * 业务分类
      */
+    @JsonValue
     private final Integer type;
+
+    @JsonCreator
+    public static PayWalletUserTypeEnum fromType(Integer type) {
+        for (PayWalletUserTypeEnum value : values()) {
+            if (value.getType().equals(type)) {
+                return value;
+            }
+        }
+        return null;
+    }
     /**
      * 说明
      */

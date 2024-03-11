@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
 
@@ -112,6 +113,9 @@ public interface PayWalletMapper extends BaseMapperX<PayWalletDO> {
                 .ge(PayWalletDO::getBalance, price); // cas 逻辑
         return update(null, lambdaUpdateWrapper);
     }
+
+    @Select("select * from pay_wallet where id = #{walletId} for update")
+    PayWalletDO selectByIdForUpdate(Long walletId);
 }
 
 

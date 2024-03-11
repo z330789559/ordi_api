@@ -10,9 +10,14 @@ import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrder
 import cn.iocoder.yudao.module.project.dal.dataobject.tradeorder.AdminTradeOrderPageDO;
 import cn.iocoder.yudao.module.project.dal.dataobject.wallettransaction.WalletTransactionAddressDO;
 import cn.iocoder.yudao.module.project.dal.dataobject.wallettransaction.WalletTransactionDO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.project.controller.admin.wallettransaction.vo.*;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.checkerframework.checker.index.qual.SameLen;
 
 /**
  * 钱包流水 Mapper
@@ -56,5 +61,21 @@ public interface WalletTransactionMapper extends BaseMapperX<WalletTransactionDO
                 )
                 .orderByDesc(WalletTransactionDO::getId));
     }
+
+
+
+    @Select("<script>"+
+            "SELECT * FROM pay_wallet_transaction WHERE 1=1 " +
+            " <if test='reqVO.address != null'> AND wallet_id  in ("
+            + " select w.id from pay_wallet w INNER JOIN member_user m on w.user_id =m.id and m.address=#{reqVO.address} "
+            + " )  </if>" +
+            "<if test='reqVO.no != null'> AND no = #{reqVO.no} </if>" +
+            "<if test='reqVO.walletId != null'> AND wallet_id = #{reqVO.walletId} </if>" +
+            "<if test='reqVO.bizType != null'> AND biz_type = #{reqVO.bizType} </if>" +
+            "<if test='reqVO.bizId != null'> AND biz_id = #{reqVO.bizId} </if>" +
+            "<if test='reqVO.createTime != null'> AND create_time &gt;= #{reqVO.createTime[0]} AND create_time &lt;= #{reqVO.createTime[1]} </if>" +
+            "  ORDER BY id DESC" +
+            "</script>")
+    Page<WalletTransactionAddressDO> selectBySqlPage(@Param("page") IPage<WalletTransactionAddressDO>page,@Param("reqVO") WalletTransactionPageReqVO reqVO);
 
 }

@@ -19,4 +19,7 @@ public class AppPayWalletIncomeSummaryRespVO {
     @Schema(description = "今日金额", example = "100")
     private BigDecimal todayAmount=BigDecimal.ZERO;
 
+    @Schema(description = "奖金池", example = "100")
+    private BigDecimal upLimit = BigDecimal.ZERO;
+
 }

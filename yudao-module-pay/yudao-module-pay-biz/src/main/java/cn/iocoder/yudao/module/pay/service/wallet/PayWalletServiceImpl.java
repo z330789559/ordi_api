@@ -9,15 +9,23 @@ import cn.iocoder.yudao.module.pay.dal.mysql.wallet.PayWalletMapper;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.bo.WalletTransactionCreateReqBO;
+
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.*;
@@ -40,8 +48,15 @@ public class PayWalletServiceImpl implements PayWalletService {
     @Resource
     private PayWalletTransactionService walletTransactionService;
 
+    @Resource
+    private TransactionTemplate transactionTemplate ;
+
+
     @Override
     public PayWalletDO getOrCreateWallet(Long userId, Integer userType) {
+        if(userType!=1 && userType!=0){
+            throw exception(WALLET_USER_TYPE_ERROR);
+        }
         PayWalletDO wallet = walletMapper.selectByUserIdAndType(userId, userType);
         if (wallet == null) {
             wallet = (PayWalletDO) new PayWalletDO().setUserId(userId).setUserType(userType)
@@ -81,63 +96,76 @@ public class PayWalletServiceImpl implements PayWalletService {
     @Override
     public PayWalletTransactionDO reduceWalletBalance(Long walletId, Long bizId,
                                                       PayWalletBizTypeEnum bizType, BigDecimal price) {
-        // 1. 获取钱包
-        PayWalletDO payWallet = getWallet(walletId);
-        if (payWallet == null) {
-            throw exception(WALLET_NOT_FOUND);
-        }
-
-        // 2.1 扣除余额
-        int updateCounts;
-        switch (bizType) {
-            case PAYMENT:
-            case PAYMENT_GAS:
-            case SELL:
-            case REWARD_PAYMENT: {
-                updateCounts = walletMapper.updateWhenConsumption(payWallet.getId(), price);
-                break;
-            }
-            case RECHARGE_REFUND: {
-                updateCounts = walletMapper.updateWhenRechargeRefund(payWallet.getId(), price);
-                break;
-            }
-            default: {
-                throw new UnsupportedOperationException("待实现");
-            }
-        }
-        if (updateCounts == 0) {
-            throw exception(WALLET_BALANCE_NOT_ENOUGH);
-        }
-        // 2.2 生成钱包流水
-        BigDecimal afterBalance = payWallet.getBalance().subtract(price);
-        WalletTransactionCreateReqBO bo = new WalletTransactionCreateReqBO().setWalletId(payWallet.getId())
-                .setPrice(price.negate()).setBalance(afterBalance).setBizId(bizId)
-                .setBizType(bizType.getType()).setTitle(bizType.getDescription());
-        return walletTransactionService.createWalletTransaction(bo);
+     return transactionTemplate.execute((action) -> {
+         PayWalletDO payWallet = getWalletWithLock(walletId);
+		  if (payWallet == null) {
+			  throw exception(WALLET_NOT_FOUND);
+		  }
+		  int updateCounts;
+		  switch (bizType) {
+		  case PAYMENT:
+		  case PAYMENT_GAS:
+          case STAKE:
+		  case SELL:
+		  case REWARD_PAYMENT: {
+			  updateCounts = walletMapper.updateWhenConsumption(payWallet.getId(), price);
+			  break;
+		  }
+		  case RECHARGE_REFUND: {
+			  updateCounts = walletMapper.updateWhenRechargeRefund(payWallet.getId(), price);
+			  break;
+		  }
+		  default: {
+			  throw new UnsupportedOperationException("待实现");
+		  }
+		  }
+		  if (updateCounts == 0) {
+              TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			  throw exception(WALLET_BALANCE_NOT_ENOUGH);
+		  }
+          BigDecimal afterBalance = payWallet.getBalance().subtract(price);
+          WalletTransactionCreateReqBO bo = new WalletTransactionCreateReqBO().setWalletId(payWallet.getId())
+                  .setPrice(price.negate()).setBalance(afterBalance).setBizId(bizId)
+                  .setBizType(bizType.getType()).setTitle(bizType.getDescription());
+          return walletTransactionService.createWalletTransaction(bo);
+	  });
     }
+
+    private PayWalletDO getWalletWithLock(Long walletId) {
+        return walletMapper.selectByIdForUpdate(walletId);
+    }
+
 
     @Override
     public PayWalletTransactionDO addWalletBalance(Long walletId, String bizId,
                                                    PayWalletBizTypeEnum bizType, BigDecimal price) {
+
+
         // 1.1 获取钱包
         PayWalletDO payWallet = getWallet(walletId);
+
         if (payWallet == null) {
             throw exception(WALLET_NOT_FOUND);
         }
         // 1.2 更新钱包金额
-        switch (bizType) {
-           case RECHARGE_GAS:
-          case REWARD_INCOME:
-              walletMapper.updateWhenReward(payWallet.getId(), price);
-               break;
-            case RECHARGE:
-            case BUY:
-            case SHELVE_REFUND:
-            case TRANSFER_INCOME: { // 充值更新
-                walletMapper.updateWhenRecharge(payWallet.getId(), price);
-                break;
-            }
+            switch (bizType) {
+               case RECHARGE_GAS:
+               case REWARD_INCOME:
+                case UNSTAKE:
+                  walletMapper.updateWhenReward(payWallet.getId(), price);
+                   break;
+                case RECHARGE:
+                case BUY:
+                case SHELVE_REFUND:
+                case TRANSFER_INCOME: { // 充值更新
+                    walletMapper.updateWhenRecharge(payWallet.getId(), price);
+                    break;
+                }
+                case REWARD_POOL_INCOME: {
+                    break;
+                }
             default: {
+                log.error("bizType:{} 未实现", bizType);
                 throw new UnsupportedOperationException("待实现");
             }
         }
@@ -149,8 +177,8 @@ public class PayWalletServiceImpl implements PayWalletService {
     }
 
     @Override
-    public PayWalletTransactionDO addBatchWalletBalance(List<Long> walletIds, String bizId, PayWalletBizTypeEnum bizType, BigDecimal price) {
-        walletIds.forEach(walletId -> addWalletBalance(walletId, bizId, bizType, price));
+    public PayWalletTransactionDO addBatchWalletBalance(Map<Long, BigDecimal> rewards, String bizId, PayWalletBizTypeEnum bizType) {
+        rewards.forEach((walletId, price) -> addWalletBalance(walletId, bizId, bizType, price));
         return null;
     }
 

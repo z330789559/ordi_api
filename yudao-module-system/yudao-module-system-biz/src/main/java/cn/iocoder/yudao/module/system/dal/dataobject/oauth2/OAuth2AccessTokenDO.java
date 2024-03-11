@@ -65,6 +65,5 @@ public class OAuth2AccessTokenDO extends TenantBaseDO {
      * 过期时间
      */
     private LocalDateTime expiresTime;
-    private Integer level;
 
 }

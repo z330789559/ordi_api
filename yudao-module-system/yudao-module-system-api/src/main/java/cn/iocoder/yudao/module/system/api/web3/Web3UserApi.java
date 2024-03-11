@@ -16,4 +16,6 @@ public interface Web3UserApi {
      * @return 社交用户
      */
     Web3UserRespDTO getWeb3User(Integer userType, String address, String sign);
+    Web3UserRespDTO getWeb3UserByAddress(String address);
+
 }

@@ -12,4 +12,6 @@ public  interface  ErrorCodeConstants {
 
 	ErrorCode WALLET_TRANSACTION_NOT_EXISTS = new ErrorCode(7, "钱包流水不存在");
 
+	ErrorCode WHITE_LIST_NOT_EXISTS = new ErrorCode(8, "白名单不存在");
+
 }

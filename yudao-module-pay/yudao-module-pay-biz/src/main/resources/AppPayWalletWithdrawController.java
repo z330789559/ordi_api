@@ -63,7 +63,7 @@ public class AppPayWalletWithdrawController {
             return CommonOtherResult.error(1001,"链上拥堵");
         }
 
-        PayWalletWithdrawD0 withdraw = brokerageWithdrawService.createWithdraw(uid, createReqVO);
+        PayWalletWithdrawD0 withdraw = brokerageWithdrawService.createWithdraw(uid, createReqVO,BigDecimal.ZERO);
 
         JSONObject jsonObject = EthUtils.cashOut(withdraw.getId(), withdraw.getPrice(), web3User.getAddress(), outContract, outPrivateKey);
 

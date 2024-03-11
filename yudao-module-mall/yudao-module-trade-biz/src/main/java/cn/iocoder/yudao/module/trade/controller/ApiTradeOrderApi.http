@@ -1,0 +1,7 @@
+@appTenentId = 1
+GET https://app.btcl2nu.com/app-api/trade/order/item/page?pageNo=1&pageSize=20
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+Authorization: Bearer e709ebfd1fc94c29af7d1229653062e0
+tenant-id: 1

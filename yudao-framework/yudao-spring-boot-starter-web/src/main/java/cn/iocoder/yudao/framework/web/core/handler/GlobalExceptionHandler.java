@@ -89,6 +89,9 @@ public class GlobalExceptionHandler {
         if (ex instanceof AccessDeniedException) {
             return accessDeniedExceptionHandler(request, (AccessDeniedException) ex);
         }
+        if(ex instanceof  IllegalArgumentException){
+             return CommonResult.error(BAD_REQUEST.getCode(), ex.getMessage());
+        }
         return defaultExceptionHandler(request, ex);
     }
 
@@ -125,6 +128,12 @@ public class GlobalExceptionHandler {
         return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数不正确:%s", fieldError.getDefaultMessage()));
     }
 
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public CommonResult<?> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+        log.warn("[illegalArgumentExceptionHandler]", ex);
+        return CommonResult.error(BAD_REQUEST.getCode(), ex.getMessage());
+    }
     /**
      * 处理 SpringMVC 参数绑定不正确，本质上也是通过 Validator 校验
      */

@@ -95,4 +95,5 @@ public interface ErrorCodeConstants {
     ErrorCode WITHDRAW_STATUS_ERROR = new ErrorCode(1_007_901_005, "提现单状态错误");
 
     ErrorCode WITHDRAW_ADDRESS_NOT_NULL = new ErrorCode(1_007_901_006, "提现地址不能为空");
+    ErrorCode WALLET_USER_TYPE_ERROR = new ErrorCode(1_007_901_007, "钱包类型错误");
 }

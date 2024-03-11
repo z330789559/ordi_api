@@ -21,4 +21,10 @@ public class Web3UserApiImpl implements Web3UserApi {
     public Web3UserRespDTO getWeb3User(Integer userType, String address, String sign) {
        return web3UserService.getWeb3User(userType, address, sign);
     }
+
+    @Override
+    public Web3UserRespDTO getWeb3UserByAddress(String address) {
+        return web3UserService.getWeb3UserByAddress(address);
+    }
+
 }

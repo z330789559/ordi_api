@@ -50,6 +50,7 @@ public interface MemberUserMapper extends BaseMapperX<MemberUserDO> {
             BigDecimal teamBalance = selectTeamBalance(item.getInvitationCode(), PayWalletUserTypeEnum.CIRCULATION.getType());
             BigDecimal personBalance = selectCurrentBalance(item.getInvitationCode(),PayWalletUserTypeEnum.CIRCULATION.getType());
             item.setTeamBalance(teamBalance.add(personBalance.negate()));
+            item.setPersonalBalance(personBalance);
             item.setBalance(personBalance);
 
         }

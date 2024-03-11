@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.pay.service.wallet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -117,6 +119,7 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
         UnAssignRewardSummaryDo res = payWalletTransactionMapper.selectRewardSummary();
         res.setTodayAmount(res.getTodayAmount().divide(token.getUsdPrice(),RoundingMode.DOWN));
         res.setTotalAmount(res.getTotalAmount().divide(token.getUsdPrice(),RoundingMode.DOWN));
+        res.setUpLimit(new BigDecimal(noRedisDAO.getRewardLimit()));
         return res;
     }
 
@@ -130,46 +133,58 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
         }
         String bizId = noRedisDAO.generate(REWARD_NO_PREFIX);
          lockAllUnAssignReward(bizId);
+         Map<Long,BigDecimal> cacheAmount =new HashMap<>();
+        List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_1);
+        if(!ids.isEmpty()){
+            BigDecimal perAmount =  rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_1_REWARD_RATE).divide(new BigDecimal(ids.size()), 8, RoundingMode.HALF_UP);
+            cacheAmount.putAll(ids.stream().collect(Collectors.toMap(id->id, id->perAmount)));
+        }
+        ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_2);
+        if(!ids.isEmpty()){
+            BigDecimal perAmount =rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_2_REWARD_RATE).divide(new BigDecimal(ids.size()), 8, RoundingMode.HALF_UP);
+            Map<Long,BigDecimal> cacheAmount2 =new HashMap<>();
+            cacheAmount2.putAll(ids.stream().collect(Collectors.toMap(id->id, id->perAmount)));
+            cacheAmount2.forEach((k, v) -> cacheAmount.merge(k, v, BigDecimal::add));
+        }
+        ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_3);
+        if(!ids.isEmpty()){
+            BigDecimal perAmount =rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_3_REWARD_RATE).divide(new BigDecimal(ids.size()), 8, RoundingMode.HALF_UP);
+            Map<Long,BigDecimal> cacheAmount3 =new HashMap<>();
+            cacheAmount3.putAll(ids.stream().collect(Collectors.toMap(id->id, id->perAmount)));
+            cacheAmount3.forEach((k, v) -> cacheAmount.merge(k, v, BigDecimal::add));
+        }
+
+        ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_4);
+        if(!ids.isEmpty()){
+            BigDecimal perAmount =rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_4_REWARD_RATE).divide(new BigDecimal(ids.size()), 8, RoundingMode.HALF_UP);
+            Map<Long,BigDecimal> cacheAmount4 =new HashMap<>();
+            cacheAmount4.putAll(ids.stream().collect(Collectors.toMap(id->id, id->perAmount)));
+            cacheAmount4.forEach((k, v) -> cacheAmount.merge(k, v, BigDecimal::add));
+        }
+        ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_5);
+        if(!ids.isEmpty()){
+            BigDecimal perAmount =rewardAmountDo.getTodayAmount()
+                    .multiply(MemberLevelConstants.LEVEL_5_REWARD_RATE).divide(new BigDecimal(ids.size()), 8, RoundingMode.HALF_UP);
+            Map<Long,BigDecimal> cacheAmount5 =new HashMap<>();
+            cacheAmount5.putAll(ids.stream().collect(Collectors.toMap(id->id, id->perAmount)));
+            cacheAmount5.forEach((k, v) -> cacheAmount.merge(k, v, BigDecimal::add));
+        }
+        //cacheAmount 中重复的key的值相加合并
         executor.execute(() -> {
-            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_1);
-            if(ids.isEmpty()){
-                return;
-            }
-            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
-                    .multiply(MemberLevelConstants.LEVEL_1_REWARD_RATE), bizId);
+            assignLevelReward(cacheAmount, bizId);
         });
-        executor.execute(() -> {
-            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_2);
-            if(ids.isEmpty()){
-                return;
-            }
-            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
-                    .multiply(MemberLevelConstants.LEVEL_2_REWARD_RATE), bizId);
-        });
-        executor.execute(() -> {
-            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_3);
-            if(ids.isEmpty()){
-                return;
-            }
-            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
-                    .multiply(MemberLevelConstants.LEVEL_3_REWARD_RATE), bizId);
-        });
-        executor.execute(() -> {
-            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_4);
-            if(ids.isEmpty()){
-                return;
-            }
-            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
-                    .multiply(MemberLevelConstants.LEVEL_4_REWARD_RATE), bizId);
-        });
-        executor.execute(() -> {
-            List<Long> ids = memberUserService.getMemberUserWalletListByLevel(MemberLevelConstants.LEVEL_5);
-            if(ids.isEmpty()){
-                return;
-            }
-            assignLevelReward(ids, rewardAmountDo.getTodayAmount()
-                    .multiply(MemberLevelConstants.LEVEL_5_REWARD_RATE), bizId);
-        });
+    }
+
+    @Override
+    public PayWalletTransactionDO getRecordByBizIdAndUserType(Long bid, Integer type) {
+        return   payWalletTransactionMapper.selectOne(new LambdaUpdateWrapper<PayWalletTransactionDO>()
+                .eq(PayWalletTransactionDO::getBizId, bid)
+                .eq(PayWalletTransactionDO::getBizType, type)
+                .eq(PayWalletTransactionDO::getDeleted, 0));
     }
 
     private void lockAllUnAssignReward(String bizId) {
@@ -179,9 +194,8 @@ public class PayWalletTransactionServiceImpl implements PayWalletTransactionServ
                 .eq(PayWalletTransactionDO::getDeleted, 0));
     }
 
-    public  void assignLevelReward(List<Long> walletIds, BigDecimal rewardAmount,String bizId) {
-        BigDecimal perAmount = rewardAmount.divide(new BigDecimal(walletIds.size()), 8, RoundingMode.HALF_UP);
-        payWalletService.addBatchWalletBalance(walletIds, bizId,REWARD_INCOME, perAmount);
+    public  void assignLevelReward(Map<Long, BigDecimal> rewards,String bizId) {
+        payWalletService.addBatchWalletBalance(rewards, bizId,REWARD_INCOME);
     }
 
 

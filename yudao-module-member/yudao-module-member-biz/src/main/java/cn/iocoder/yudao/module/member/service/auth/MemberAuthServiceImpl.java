@@ -98,6 +98,16 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         return AuthConvert.INSTANCE.convert(accessTokenDO, null);
     }
 
+    @Override
+    public AppAuthLoginRespVO token(String address) {
+
+        Web3UserRespDTO web3User = web3UserApi.getWeb3UserByAddress(address);
+
+        MemberUserDO user = userService.getUserByAddress(address);
+
+        return createTokenAfterLoginSuccess(user, user.getMobile(), LoginLogTypeEnum.LOGIN_SOCIAL, web3User.getAddress());
+    }
+
     private UserTypeEnum getUserType() {
         return UserTypeEnum.MEMBER;
     }

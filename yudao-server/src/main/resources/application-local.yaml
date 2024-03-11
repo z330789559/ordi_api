@@ -145,6 +145,6 @@ logging:
     cn.iocoder.yudao.module.statistics.dal.mysql: debug
 
 contract:
-  in: '0xA447f14f858248073641197fafBEA6302006d0E8'
-  out: '0x416A97F925665E5211dB037Bb39322CBF84e9023'
-  outKey: '94bb9de1711c4bb5621dce0eddbdd64e28bb25f7860acdd0e7b6b0025408c6b7'
+  in: '0xe4caF511a8A312EE60Cf05830D81fe5344954055'
+  out: '0xD657C551566067BAfFF05acf853EB839aa254358'
+  outKey: 'ac046598c94e1e5b3b0ee02689d490bbe6b7771786bb035dddeb4346ebd3dbb2'

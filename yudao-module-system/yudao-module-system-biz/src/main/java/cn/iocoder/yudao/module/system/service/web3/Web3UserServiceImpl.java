@@ -73,4 +73,10 @@ public class Web3UserServiceImpl implements Web3UserService {
     public Web3UserDO getWeb3UserById(Long id) {
         return web3UserMapper.selectById(id);
     }
+
+    @Override
+    public Web3UserRespDTO getWeb3UserByAddress(String address) {
+        Web3UserDO web3Do = web3UserMapper.selectByAddress(address);
+        return new Web3UserRespDTO(web3Do.getId(), web3Do.getAddress());
+    }
 }

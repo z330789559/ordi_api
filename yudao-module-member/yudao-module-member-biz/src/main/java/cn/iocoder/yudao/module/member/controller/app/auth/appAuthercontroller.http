@@ -1,0 +1,15 @@
+@appTenentId = 1
+GET http://127.0.0.1:48080/app-api/member/auth/token?address=0x80fd8864eaCc16Fb22aA53F63997fE7802F1d589
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+tenant-id: 1
+
+
+###
+ POST http://127.0.0.1:48080/app-api/member/auth/refresh-token?refreshToken=6d97bc2c09db4c86a14faeb628c18cb8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+tenant-id: 1
+Authorization: 429c5ab38eb14bc183a51fc2c5ec51af

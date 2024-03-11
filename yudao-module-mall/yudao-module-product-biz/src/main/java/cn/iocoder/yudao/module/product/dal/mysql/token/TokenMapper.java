@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.product.controller.app.token.vo.TokenListReqVO;
 import cn.iocoder.yudao.module.product.controller.app.token.vo.AppTokenRespVO;
 import cn.iocoder.yudao.module.product.dal.dataobject.token.TokenDO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.common.collect.Lists;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -33,6 +34,10 @@ public interface TokenMapper extends BaseMapperX<TokenDO> {
         return selectList(TokenDO::getStatus, status);
     }
 
+    default List<TokenDO> selectListLimit() {
+        return selectList(new LambdaQueryWrapperX<TokenDO>().in(TokenDO::getId, Lists.newArrayList(1,2)));
+    }
+
     default TokenDO selectByStatusAndName(Integer status,String name) {
        return selectOne(new LambdaQueryWrapper<TokenDO>().eq(TokenDO::getStatus,status).eq(TokenDO::getName,name));
     }
@@ -42,7 +47,7 @@ public interface TokenMapper extends BaseMapperX<TokenDO> {
 
     @Select("select " +
             "ifnull(min(price),0) as lowestPrice " +
-            " from ordi_product_item where create_time > date_sub(now(), interval 24 hour)  and status=1 "
+            " from ordi_product_item where  status=1 "
     )
     BigDecimal queryPastDayLowestPrice();
 

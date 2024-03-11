@@ -29,4 +29,5 @@ public interface PayWalletTransactionService {
 
     void assiginReward();
 
+    PayWalletTransactionDO getRecordByBizIdAndUserType(Long bid, Integer type);
 }

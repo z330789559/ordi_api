@@ -49,6 +49,9 @@ public class EthUtils {
     public static String zijinchiContractAddress = "0x7EFaEf62fDdCCa950418312c6C91Aef321375A00";
     public static String dogeContractAddress = "0xbA2aE424d960c26247Dd6c32edC70B295c744C43"; // doge代币
     public static String btcContractAddress = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
+    public static String ethContractAddress = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
+
+    public static String treasuryAccount = "0x4DD6d6FA0F371870474a0CB34BC7281E831db958";
     public static String scanUrl;
     public static BigInteger startBlock = BigInteger.valueOf(29107967);
 
@@ -735,7 +738,7 @@ toAddress 接收地址
 
 
     public static BigDecimal uintToBigdeciml(String value) {
-        return new BigDecimal(value).divide(WEI, 6, RoundingMode.HALF_DOWN);
+        return new BigDecimal(value).divide(WEI, 8, RoundingMode.HALF_DOWN);
     }
 
     public static String reduceSwap(String privateKey, String contractAddress) {

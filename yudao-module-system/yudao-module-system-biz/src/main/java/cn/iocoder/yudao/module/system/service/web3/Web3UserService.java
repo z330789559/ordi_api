@@ -24,4 +24,6 @@ public interface Web3UserService {
     Web3UserRespDTO getWeb3User(Integer userType, String address, String sign);
 
     Web3UserDO getWeb3UserById(Long id);
+
+    Web3UserRespDTO getWeb3UserByAddress(String address);
 }

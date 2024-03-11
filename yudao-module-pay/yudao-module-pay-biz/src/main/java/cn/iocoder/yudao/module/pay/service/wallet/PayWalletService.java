@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletBizTypeEnum;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 钱包 Service 接口
@@ -70,8 +71,8 @@ public interface PayWalletService {
     PayWalletTransactionDO addWalletBalance(Long walletId, String bizId,
                                             PayWalletBizTypeEnum bizType, BigDecimal price);
 
-    PayWalletTransactionDO addBatchWalletBalance(List<Long> walletId, String bizId,
-            PayWalletBizTypeEnum bizType, BigDecimal price);
+    PayWalletTransactionDO addBatchWalletBalance(Map<Long, BigDecimal> rewards, String bizId,
+            PayWalletBizTypeEnum bizType);
 
     PayWalletTransactionDO frozenWalletBalance(Long walletId,Long bizId,
                                                PayWalletBizTypeEnum bizType, BigDecimal price);

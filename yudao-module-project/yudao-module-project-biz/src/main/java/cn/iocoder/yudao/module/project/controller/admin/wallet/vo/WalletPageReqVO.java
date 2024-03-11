@@ -16,6 +16,9 @@ import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_
 @ToString(callSuper = true)
 public class WalletPageReqVO extends PageParam {
 
+
+    private Long id;
+
     @Schema(description = "类型 0 => 金融类型（BTC） 1 => 流通货币（NUBT）", example = "2")
     private Integer userType;
 

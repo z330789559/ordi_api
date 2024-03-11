@@ -55,6 +55,7 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
     @Override
     public TradeOrderDO createOrder(Long userId, String userIp, AppShelveOrderCreateReqVO createReqVO, Integer terminal) {
         TokenRespDTO tokenRespDTO = tokenApi.getToken(2L);
+
         createReqVO.setRate(tokenRespDTO.getUsdPrice());
 
         BigDecimal cirPrice = BigDecimal.valueOf(createReqVO.getQuantity());
@@ -78,7 +79,8 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
         if (sellFeeBtc.compareTo(finWalletRespDTO.getBalance()) > 0) {
             throw exception(WALLET_BALANCE_NOT_ENOUGH);
         }
-        finWalletRespDTO.setPayPrice(sellFeeBtc);
+        finWalletRespDTO.setPayPrice(createReqVO.getPrice());
+        finWalletRespDTO.setGasFee(sellFeeBtc);
 
         TradeOrderDO tradeOrderDO = submitOrder(userId, userIp, createReqVO, cirWalletRespDTO, finWalletRespDTO);
 
@@ -97,9 +99,9 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
 
         TradeOrderDO order = new TradeOrderDO();
         order.setPayTime(LocalDateTime.now()).setPayStatus(true)
-                .setPayPrice(cirWalletRespDTO.getPayPrice())
+                .setPayPrice(createReqVO.getPrice())
                 .setTotalPrice(cirWalletRespDTO.getPayPrice())
-                .setGasFee(finWalletRespDTO.getPayPrice())
+                .setGasFee(finWalletRespDTO.getGasFee())
                 .setUserIp(userIp).setUserId(userId).setType(1)
                 .setRemark("上架订单");
         item.setUsdPrice(createReqVO.getRate());
@@ -111,8 +113,8 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
 
         itemApi.updateOrderItem(item.getId(), orderItem.getId());
 
-        payWalletApi.reduceWalletBalance(order.getId(), PayWalletBizTypeEnum.SELL, cirWalletRespDTO.getId(), cirWalletRespDTO.getPayPrice());
-        payWalletApi.reduceWalletBalance(order.getId(), PayWalletBizTypeEnum.PAYMENT_GAS, finWalletRespDTO.getId(), finWalletRespDTO.getPayPrice());
+        payWalletApi.reduceWalletBalance(order.getId(), PayWalletBizTypeEnum.SELL, cirWalletRespDTO.getId(), BigDecimal.valueOf(createReqVO.getQuantity()));
+        payWalletApi.reduceWalletBalance(order.getId(), PayWalletBizTypeEnum.PAYMENT_GAS, finWalletRespDTO.getId(), finWalletRespDTO.getGasFee());
 
         return order;
     }
@@ -147,7 +149,7 @@ public class ShelveOrderUpdateServiceImpl implements ShelveOrderUpdateService {
         // 4. 更新余额
         PayWalletRespDTO cirWalletRespDTO = payWalletApi.getOrCreateWallet(userId, PayWalletUserTypeEnum.CIRCULATION.getType());
         payWalletApi.addWalletBalance(item.getId(), PayWalletBizTypeEnum.SHELVE_REFUND,
-                cirWalletRespDTO.getId(), item.getPayPrice());
+                cirWalletRespDTO.getId(), BigDecimal.valueOf(item.getQuantity()));
 
         // 4. 下架商品
         ItemRespDTO product = itemApi.getItem(item.getItemId());

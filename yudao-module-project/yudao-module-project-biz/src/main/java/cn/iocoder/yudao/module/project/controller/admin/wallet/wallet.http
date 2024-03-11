@@ -1,0 +1,3 @@
+GET http://localhost:48080/admin-api/project/wallet/page?pageNo=1&pageSize=10&address=0xf50302186c8541370ca9ed84d70954fba4f5d44e
+Tenant-Id: 1
+Authorization: Bearer 04d828727de749ab80c07d933c9f44cb

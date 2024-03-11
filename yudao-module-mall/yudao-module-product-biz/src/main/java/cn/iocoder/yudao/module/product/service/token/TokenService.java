@@ -97,4 +97,5 @@ public interface TokenService {
     BigDecimal getPastDayLowestShelvesPrice();
 
     AppTokenRespVO selectVolume();
+
 }

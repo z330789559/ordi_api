@@ -25,19 +25,16 @@ public class TradeOrderSaveReqVO {
     private Integer type;
 
     @Schema(description = "终端", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "终端不能为空")
-    private Integer terminal;
+   private Integer terminal;
 
     @Schema(description = "用户id", requiredMode = Schema.RequiredMode.REQUIRED, example = "7830")
     @NotNull(message = "用户id不能为空")
     private Long userId;
 
     @Schema(description = "用户ip", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "用户ip不能为空")
     private String userIp;
 
     @Schema(description = "用户备注", requiredMode = Schema.RequiredMode.REQUIRED, example = "你说的对")
-    @NotEmpty(message = "用户备注不能为空")
     private String userRemark;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
@@ -53,7 +50,6 @@ public class TradeOrderSaveReqVO {
     private Integer cancelType;
 
     @Schema(description = "备注", requiredMode = Schema.RequiredMode.REQUIRED, example = "随便")
-    @NotEmpty(message = "备注不能为空")
     private String remark;
 
     @Schema(description = "支付状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
@@ -78,7 +74,6 @@ public class TradeOrderSaveReqVO {
     private BigDecimal payPrice;
 
     @Schema(description = "vip 价格", requiredMode = Schema.RequiredMode.REQUIRED, example = "24098")
-    @NotNull(message = "vip 价格不能为空")
     private BigDecimal vipPrice;
 
     @Schema(description = "调整价格", requiredMode = Schema.RequiredMode.REQUIRED, example = "25238")
@@ -94,15 +89,12 @@ public class TradeOrderSaveReqVO {
     private Long payOrderId;
 
     @Schema(description = "支付通道", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "支付通道不能为空")
     private String payChannelCode;
 
     @Schema(description = "age用户id", requiredMode = Schema.RequiredMode.REQUIRED, example = "16450")
-    @NotNull(message = "age用户id不能为空")
     private Long brokerageUserId;
 
     @Schema(description = "退款价格", requiredMode = Schema.RequiredMode.REQUIRED, example = "23710")
-    @NotNull(message = "退款价格不能为空")
     private BigDecimal refundPrice;
 
     @Schema(description = "交易订单明细列表")

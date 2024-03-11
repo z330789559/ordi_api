@@ -184,7 +184,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public List<TokenDO> getEnableTokenList() {
-        return tokenMapper.selectListByStatus(CommonStatusEnum.ENABLE.getStatus());
+        return tokenMapper.selectListLimit();
     }
 
     @Override
@@ -222,6 +222,40 @@ public class TokenServiceImpl implements TokenService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        scanEThPrice();
+    }
+
+   private void  scanEThPrice() {
+        try {
+            String url = "https://www.okx.com/api/v5/market/index-tickers?instId=ETH-USDT";
+            String body = HttpRequest.get(url).execute().body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            TokenPriceScanRespVO result = objectMapper.readValue(body, TokenPriceScanRespVO.class);
+            if (result != null && result.getData().size() > 0) {
+                TokenPriceScanRespVO.DataItem item = result.getData().get(0);
+                // 涨跌幅。。。 暂时为 24小时指数开盘价格和当前价对比
+                BigDecimal idPx = new BigDecimal(item.getIdxPx());
+                BigDecimal open24h = new BigDecimal(item.getOpen24h());
+
+                BigDecimal changeRate = (idPx.subtract(open24h)).divide(open24h, 6, RoundingMode.UP);
+
+                BigDecimal rate = BigDecimal.ONE.divide(idPx, 10, RoundingMode.UP);
+
+                tokenMapper.update(new LambdaUpdateWrapper<TokenDO>()
+                        .set(TokenDO::getPrice, rate)
+                        .set(TokenDO::getUsdPrice, rate)
+                        .set(TokenDO::getMarketCap, idPx)
+                        .set(TokenDO::getChangeRate, changeRate)
+                        .eq(TokenDO::getName, "ETH"));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
         }
     }
 

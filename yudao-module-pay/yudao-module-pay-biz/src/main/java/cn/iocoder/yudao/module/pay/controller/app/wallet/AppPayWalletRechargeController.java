@@ -9,6 +9,8 @@ import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.recharge.AppPayWalle
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargeDO;
 import cn.iocoder.yudao.module.pay.enums.wallet.PayWalletUserTypeEnum;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargeService;
+import cn.iocoder.yudao.module.product.dal.dataobject.token.TokenDO;
+import cn.iocoder.yudao.module.product.service.token.TokenService;
 import cn.iocoder.yudao.module.system.dal.dataobject.web3.Web3UserDO;
 import com.alibaba.fastjson2.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,10 +30,12 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static cn.iocoder.yudao.framework.common.util.servlet.ServletUtils.getClientIP;
 import static cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils.getLoginUserId;
 import static cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils.getLoginUserType;
+import static cn.iocoder.yudao.module.pay.enums.ErrorCodeConstants.WALLET_BALANCE_NOT_ENOUGH;
 
 @Tag(name = "用户 APP - 钱包充值")
 @RestController
@@ -47,11 +51,15 @@ public class AppPayWalletRechargeController {
     private Web3UserService web3UserService;
 
     @Resource
+    private TokenService tokenService;
+
+    @Resource
     private MemberUserService memberUserService;
 
     @Value("${contract.in}")
     private String inContract;
 
+    private BigDecimal maxSubmitPrice = new BigDecimal("3000000000");
 
     @PostMapping("/create")
     @Operation(summary = "创建钱包充值记录（发起充值）")
@@ -60,8 +68,16 @@ public class AppPayWalletRechargeController {
             @Valid @RequestBody AppPayWalletRechargeCreateReqVO reqVO) {
         MemberUserDO user = memberUserService.getUser(getLoginUserId());
         Web3UserDO web3User = web3UserService.getWeb3UserById(Long.valueOf(user.getMobile()));
+        TokenDO Btc = tokenService.getToken(2L);
+        BigDecimal balance = EthUtils.getErc20Balance(web3User.getAddress(), EthUtils.btcContractAddress);
+        if(balance.compareTo(BigDecimal.ZERO) <= 0){
+            return CommonOtherResult.error(WALLET_BALANCE_NOT_ENOUGH);
+        }
         BigDecimal allowanceUsdtNum = EthUtils.getErc20Allowance(web3User.getAddress(), EthUtils.btcContractAddress, inContract);
         BigDecimal payPrice = reqVO.getPayPrice();
+        if(payPrice.divide(Btc.getMarketCap(), RoundingMode.HALF_UP).compareTo(maxSubmitPrice)>0){
+            return CommonOtherResult.error(1002,"充值金额超过最大限制");
+        }
         // 查询授权额度
         if (allowanceUsdtNum.compareTo(payPrice) < 0) {
             // 授权

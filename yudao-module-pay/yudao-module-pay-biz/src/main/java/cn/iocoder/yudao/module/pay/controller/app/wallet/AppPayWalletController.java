@@ -4,11 +4,13 @@ import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.security.core.annotations.PreAuthenticated;
+import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.stake.AppPayWalletStakeVo;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.transaction.AppPayWalletIncomeSummaryRespVO;
 import cn.iocoder.yudao.module.pay.controller.app.wallet.vo.wallet.AppPayWalletRespVO;
 import cn.iocoder.yudao.module.pay.convert.wallet.PayWalletConvert;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletDO;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletService;
+import cn.iocoder.yudao.module.pay.service.wallet.PayWalletStakeService;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletTransactionService;
 import cn.iocoder.yudao.module.product.controller.app.token.vo.TokenListReqVO;
 import cn.iocoder.yudao.module.product.dal.dataobject.token.TokenDO;
@@ -45,6 +47,9 @@ public class AppPayWalletController {
 
     @Resource
     private TokenService tokenService;
+
+    @Resource
+    private PayWalletStakeService payWalletStakeService;
 
     @Resource
     private PayWalletTransactionService transactionService;
@@ -84,6 +89,11 @@ public class AppPayWalletController {
             convert.setTodayIncomeGas(incomeSummary.getTodayAmount());
         }
 
+        AppPayWalletStakeVo stake=payWalletStakeService.getMyStake(getLoginUserId());
+        if(stake!=null){
+            convert.setStakeAmount(stake.getPayPrice());
+            convert.setStakeReward(stake.getRefundBonusPrice());
+        }
         return success(convert);
     }
 

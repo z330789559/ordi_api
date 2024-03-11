@@ -36,4 +36,10 @@ public class AppPayWalletRespVO {
     @Schema(description = "今日收入gas",  example = "100")
     private BigDecimal todayIncomeGas;
 
+    @Schema(description = "质押",  example = "100")
+    private BigDecimal stakeAmount;
+
+    @Schema(description = "质押奖励",  example = "100")
+    private BigDecimal stakeReward;
+
 }
